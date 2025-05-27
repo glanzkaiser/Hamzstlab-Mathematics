@@ -6,7 +6,7 @@ Real time plotting library for Mathematics learning.
 [implot](https://github.com/epezent/implot)
 [implot3d](https://github.com/brenocq/implot3d)
 
-In this repository we already have the dependencies downloaded so no need for downloading again, but it is encouraged to read both the repositories above to learn more.
+In this repository we already have the dependencies downloaded so no need for downloading again, but it is encouraged to read the repositories above to learn more.
 
 # Example
 
