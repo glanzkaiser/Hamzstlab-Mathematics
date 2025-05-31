@@ -1,5 +1,5 @@
 # Hamzstlab-Mathematics
-Real time plotting library for Mathematics learning.
+Interactive plotting library for Mathematics learning.
 
 ## Dependencies
 [imgui v 1.92.0 WIP](https://github.com/ocornut/imgui)
