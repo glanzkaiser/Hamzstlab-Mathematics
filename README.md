@@ -22,6 +22,16 @@ This `PilotProject` will plot stairstep function, sine function, and a histogram
 
 You can see that it is really fun, compared to the an image library like gnuplot, you can do more here with Imgui and Implot.
 
+Another example is at `examples/First Order Differential Equation/`, from this directory open terminal and type
+
+```
+make
+./main
+```
+
+This will plot an analytic solution of $`\frac{dy}{dt} = 3 - 2t - \frac{1}{2} y`$ with initial value of $`y(0)=1`$ and the scatter plot of the Euler's method approximation.
+
+
 # ImPlot Demos
 
 In the `/implot-demos` directory we have modified the implot_demos that has lengthier code to build an application or simulation like signal processing, perlin noise, realtime audio spectogram and visualizer.
@@ -55,3 +65,4 @@ make
 | 3D Test 	    | <img src="https://github.com/glanzkaiser/Hamzstlab-Mathematics/blob/main/images/HamzstlabMath3d.gif" width="83%">
 | Implot Demo 	    | <img src="https://github.com/glanzkaiser/Hamzstlab-Mathematics/blob/main/images/ImplotDemo.gif" width="83%">
 | Spectogram 	    | <img src="https://github.com/glanzkaiser/Hamzstlab-Mathematics/blob/main/images/implotdemos.gif" width="83%">
+| Euler's Method    | <img src="https://github.com/glanzkaiser/Hamzstlab-Mathematics/blob/main/images/1storderDE.png" width="83%">
