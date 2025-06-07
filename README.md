@@ -7,6 +7,10 @@ Interactive plotting library for Mathematics learning.
 [implot3d](https://github.com/brenocq/implot3d)
 [implot_demos](https://github.com/epezent/implot_demos)
 
+# Manual Book
+
+<a href="https://github.com/glanzkaiser/Hamzstplot/blob/main/Hamzstlab%20Mathematics%20and%20Hamzstplot.pdf">Click</a>
+
 In this repository we already have the dependencies downloaded so no need for downloading again, but it is encouraged to read the repositories above to learn more.
 
 # Example
