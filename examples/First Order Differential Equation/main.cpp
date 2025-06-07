@@ -1,6 +1,4 @@
-// Demo:   demo.cpp
-// Author: Evan Pezent (evanpezent.com)
-// Date:   3/26/2021
+//Modified from:  demo.cpp (implot-demos) by Evan Pezent (evanpezent.com)
 
 #include "App.h"
 

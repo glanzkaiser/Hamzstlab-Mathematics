@@ -30,6 +30,7 @@
 #include "implot.h"
 #ifndef IMGUI_DISABLE
 #include <math.h>
+#include <cmath>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -192,7 +193,7 @@ void Demo_Help() {
     ImGui::BulletText("We are demonstrating the solution of first order differential equations");
     ImGui::Separator();
     ImGui::Text("PROGRAMMER GUIDE:");
-    ImGui::BulletText("See the ShowFirstOrderDEWindow() code in hamzstlab-firstorderde.cpp. <- you are here!");
+    ImGui::BulletText("See the ShowFirstOrderDEWindow() code in hamzstlab-firstorderdifferentialequations.cpp. <- you are here!");
     ImGui::BulletText("If you see visual artifacts, do one of the following:");
     ImGui::Indent();
     ImGui::BulletText("Handle ImGuiBackendFlags_RendererHasVtxOffset for 16-bit indices in your backend.");
@@ -324,6 +325,172 @@ void Demo_LinePlots() {
 }
 
 //-----------------------------------------------------------------------------
+void Demo_DirectionFields() {
+	// y' = 3 - 2t - 0.5y
+	static double xs[50], ys[50], xs2[50], ys2[50], xs3[50], ys3[50], xs4[50], ys4[50], xs5[50], ys5[50], xs6[50], ys6[50];
+
+	xs[0] = 0;
+	ys[0] = 0;
+	double m = 3 - 2*(xs[0]) - 0.5*(ys[0]);
+	for (int i = 1; i < 50; ++i) 
+	{
+		xs[i] = (i * 1/19.0f) ;
+		ys[i] = ys[i-1] + m*(xs[i] - xs[i-1]);
+		m = 3 - 2*xs[i] - 0.5*ys[i]; // y' = 3 - 2t - 0.5y
+	}
+	xs2[0] = 0;
+	ys2[0] = 0.82;
+	m = 3 - 2*(xs2[0]) - 0.5*(ys2[0]);
+	for (int i = 1; i < 50; ++i) 
+	{
+		xs2[i] = (i * 1/19.0f) ;
+		ys2[i] = ys2[i-1] + m*(xs2[i] - xs2[i-1]);
+		m = 3 - 2*xs2[i] - 0.5*ys2[i]; // y' = 3 - 2t - 0.5y
+	}
+	xs3[0] = 0;
+	ys3[0] = -0.82;
+	m = 3 - 2*(xs3[0]) - 0.5*(ys3[0]);
+	for (int i = 1; i < 50; ++i) 
+	{
+		xs3[i] = (i * 1/19.0f) ;
+		ys3[i] = ys3[i-1] + m*(xs3[i] - xs3[i-1]);
+		m = 3 - 2*xs3[i] - 0.5*ys3[i]; // y' = 3 - 2t - 0.5y
+	}
+	xs4[0] = 0;
+	ys4[0] = -1.42;
+	m = 3 - 2*(xs4[0]) - 0.5*(ys4[0]);
+	for (int i = 1; i < 50; ++i) 
+	{
+		xs4[i] = (i * 1/19.0f) ;
+		ys4[i] = ys4[i-1] + m*(xs4[i] - xs4[i-1]);
+		m = 3 - 2*xs4[i] - 0.5*ys4[i]; // y' = 3 - 2t - 0.5y
+	}
+	xs5[0] = 0;
+	ys5[0] = -1.8;
+	m = 3 - 2*(xs5[0]) - 0.5*(ys5[0]);
+	for (int i = 1; i < 50; ++i) 
+	{
+		xs5[i] = (i * 1/19.0f) ;
+		ys5[i] = ys5[i-1] + m*(xs5[i] - xs5[i-1]);
+		m = 3 - 2*xs5[i] - 0.5*ys5[i]; // y' = 3 - 2t - 0.5y
+	}
+	xs6[0] = 0;
+	ys6[0] = -2.1;
+	m = 3 - 2*(xs6[0]) - 0.5*(ys6[0]);
+	for (int i = 1; i < 50; ++i) 
+	{
+		xs6[i] = (i * 1/19.0f) ;
+		ys6[i] = ys6[i-1] + m*(xs6[i] - xs6[i-1]);
+		m = 3 - 2*xs6[i] - 0.5*ys6[i]; // y' = 3 - 2t - 0.5y
+	}
+	if (ImPlot::BeginPlot("Direction Fields")) 
+	{
+	ImPlot::SetupAxes("x","y");
+	ImPlot::SetupAxesLimits(0,2,0,2.3);
+	//ImPlot::SetNextMarkerStyle(ImPlotMarker_Right, 4, ImPlot::GetColormapColor(2), IMPLOT_AUTO, ImPlot::GetColormapColor(2));
+	ImPlot::PlotLine("", xs, ys, 50,ImPlotLineFlags_Segments);
+	//ImPlot::PushStyleColor(ImPlotCol_Line, ImVec4(0.6f,0.6f,0.3f,0.8f));
+        
+	ImPlot::PlotLine("", xs2, ys2, 50,ImPlotLineFlags_Segments);
+	ImPlot::PlotLine("", xs3, ys3, 50,ImPlotLineFlags_Segments);
+	ImPlot::PlotLine("", xs4, ys4, 50,ImPlotLineFlags_Segments);
+	ImPlot::PlotLine("", xs5, ys5, 50,ImPlotLineFlags_Segments);
+	ImPlot::PlotLine("", xs6, ys6, 50,ImPlotLineFlags_Segments);
+	ImPlot::EndPlot();
+	}
+}
+
+//-----------------------------------------------------------------------------
+double f(double x, double y) {
+	return 3 - 2*x - 0.5*y ;// Example : y' = 3 - 2t - 0.5y
+	//return -x / y; // Example: dy/dx = -x/y
+}
+void Demo_DirectionFields2() {
+	// y' = 3 - 2t - 0.5y
+	// Define your differential equation
+
+	static double xs[500], ys[500];
+	int i = 1;
+	double x_min = -3.0, x_max = 3.0;
+	double y_min = -3.0, y_max = 3.0;
+	double step_size = 0.5;
+	double dx, dy, magnitude;
+	xs[0] = x_min;
+	ys[0] = y_min;
+	for (double y = y_min; y <= y_max; y += step_size) {
+	for (double x = x_min; x <= x_max; x += step_size) {
+		if (std::abs(y) > 0.001) { // Avoid division by zero for this example
+		double slope = f(x, y);
+		// Calculate components of a unit vector in the direction of the slope
+		dx = 1.0;
+		dy = slope;
+		magnitude = sqrt(dx * dx + dy * dy);
+		dx = dx / magnitude;
+		dy = dy / magnitude;
+
+		}
+		xs[i] = x;
+		ys[i] = y;
+		i = i+1;
+		xs[i] = x+dx;
+		ys[i] = y+dy;
+		i = i+1;
+        }
+	
+	}
+
+	if (ImPlot::BeginPlot("Direction Fields 2")) 
+	{
+	ImPlot::SetupAxes("x","y");
+	ImPlot::SetupAxesLimits(-3,3,-3,3);
+	//ImPlot::SetNextMarkerStyle(ImPlotMarker_Right, 4, ImPlot::GetColormapColor(2), IMPLOT_AUTO, ImPlot::GetColormapColor(2));
+	ImPlot::PlotLine(" ", xs, ys, 500,ImPlotLineFlags_Segments);
+	//ImPlot::PushStyleColor(ImPlotCol_Line, ImVec4(0.6f,0.6f,0.3f,0.8f));
+	ImPlot::EndPlot();
+	}
+}
+
+
+//-----------------------------------------------------------------------------
+
+void Demo_CompoundInterest() {
+	static float xs1[1001], ys1[1001];
+	static int S0 = 0;
+	static float r = 0.08;
+	static int k = 2000;
+	for (int i = 0; i < 1001; ++i) {
+	xs1[i] = i;
+	ys1[i] = S0 * exp(r*i) + (k/r)*(exp(r*i) - 1) ;
+	}
+
+	static bool range = false;
+	ImGui::Checkbox("Change parameters", &range);
+    
+	if (range) {
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(200);
+	ImGui::BulletText("Initial Deposit");
+	ImGui::SliderInt("##Initial Deposit", &S0, 0, 10000);
+	ImGui::SetNextItemWidth(200);
+	ImGui::BulletText("Annual Deposit");
+	ImGui::SliderInt("##Annual Deposit", &k, 1, 10000);
+	ImGui::SetNextItemWidth(200);
+	ImGui::BulletText("Return Rate");
+	ImGui::DragFloat("##Return rate", &r, 0.01f, 0.2f);
+	ImGui::SetNextItemWidth(200);
+	}
+	if (ImPlot::BeginPlot("How Long to Make USD 1 million with Annual Deposit?")) {
+	ImPlot::SetupAxes("t","S(t)");
+	ImPlot::SetupAxesLimits(0, 60, 0, 1000000);
+	ImPlot::SetupLegend(ImPlotLocation_East, ImPlotLegendFlags_Outside);
+        
+	ImPlot::PlotLine("S(t) = S_{0} exp(rt) + (k/r) (exp(rt) - 1)", xs1, ys1, 1001);
+	ImPlot::EndPlot();
+    }
+}
+
+//-----------------------------------------------------------------------------
+
 
 void Demo_ScatterPlots() {
     srand(0);
@@ -541,6 +708,9 @@ void ShowFirstOrderDEWindow(bool* p_open) {
 
     if (ImGui::BeginTabBar("ImPlotDemoTabs")) {
         if (ImGui::BeginTabItem("Plots")) {
+	    DemoHeader("Compound Interest", Demo_CompoundInterest);
+            DemoHeader("Direction Fields", Demo_DirectionFields);
+            DemoHeader("Direction Fields 2", Demo_DirectionFields2);
             DemoHeader("Euler Method's", Demo_LinePlots);
             ImGui::EndTabItem();
         }
