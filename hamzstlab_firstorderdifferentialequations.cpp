@@ -491,6 +491,49 @@ void Demo_CompoundInterest() {
 
 //-----------------------------------------------------------------------------
 
+void Demo_LogisticGrowth() {
+	static float xs1[1001], ys1[1001],ys2[1001],ys3[1001],ys4[1001],ys5[1001];
+	static int y01 = 1, y02 = 2, y03 = 3, y04 = 6, y05 = 7;
+	static float r = 0.8;
+	static int K = 5;
+	for (int i = 0; i < 1001; ++i) {
+	xs1[i] = i;
+	ys1[i] = (y01*K) / (y01 + (K - y01)*(exp(-r*i)) ) ;
+	ys2[i] = (y02*K) / (y02 + (K - y02)*(exp(-r*i)) ) ;
+	ys3[i] = (y03*K) / (y03 + (K - y03)*(exp(-r*i)) ) ;
+	ys4[i] = (y04*K) / (y04 + (K - y04)*(exp(-r*i)) ) ;
+	ys5[i] = (y05*K) / (y05 + (K - y05)*(exp(-r*i)) ) ;
+	
+	}
+
+	static bool range = false;
+	ImGui::Checkbox("Change parameters", &range);
+    
+	if (range) {
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(200);
+	ImGui::BulletText("K");
+	ImGui::SliderInt("##K", &K, 1, 100);
+	ImGui::SetNextItemWidth(200);
+	ImGui::BulletText("Rate");
+	ImGui::DragFloat("##Rate", &r, 0.01f, 0.99f);
+	ImGui::SetNextItemWidth(200);
+	}
+	if (ImPlot::BeginPlot("Logistic Growth")) {
+	ImPlot::SetupAxes("t","y(t)");
+	ImPlot::SetupAxesLimits(0, 10, 0, 10);
+	ImPlot::SetupLegend(ImPlotLocation_East, ImPlotLegendFlags_Outside);
+        
+	ImPlot::PlotLine("y(t) = ( y_{0} * K ) / ( y_{0} + (K - y_{0})exp(-rt) )", xs1, ys1, 1001);
+	ImPlot::PlotLine("y(t) = ( y_{0} * K ) / ( y_{0} + (K - y_{0})exp(-rt) )", xs1, ys2, 1001);
+	ImPlot::PlotLine("y(t) = ( y_{0} * K ) / ( y_{0} + (K - y_{0})exp(-rt) )", xs1, ys3, 1001);
+	ImPlot::PlotLine("y(t) = ( y_{0} * K ) / ( y_{0} + (K - y_{0})exp(-rt) )", xs1, ys4, 1001);
+	ImPlot::PlotLine("y(t) = ( y_{0} * K ) / ( y_{0} + (K - y_{0})exp(-rt) )", xs1, ys5, 1001);
+	ImPlot::EndPlot();
+    }
+}
+//-----------------------------------------------------------------------------
+
 
 void Demo_ScatterPlots() {
     srand(0);
@@ -709,6 +752,7 @@ void ShowFirstOrderDEWindow(bool* p_open) {
     if (ImGui::BeginTabBar("ImPlotDemoTabs")) {
         if (ImGui::BeginTabItem("Plots")) {
 	    DemoHeader("Compound Interest", Demo_CompoundInterest);
+            DemoHeader("Logistic Growth", Demo_LogisticGrowth);
             DemoHeader("Direction Fields", Demo_DirectionFields);
             DemoHeader("Direction Fields 2", Demo_DirectionFields2);
             DemoHeader("Euler Method's", Demo_LinePlots);
