@@ -70,3 +70,4 @@ make
 | Implot Demo 	    | <img src="https://github.com/glanzkaiser/Hamzstlab-Mathematics/blob/main/images/ImplotDemo.gif" width="83%">
 | Spectogram 	    | <img src="https://github.com/glanzkaiser/Hamzstlab-Mathematics/blob/main/images/implotdemos.gif" width="83%">
 | Euler's Method    | <img src="https://github.com/glanzkaiser/Hamzstlab-Mathematics/blob/main/images/1storderDE.png" width="83%">
+| Root Finding	    | <img src="https://github.com/glanzkaiser/Hamzstlab-Mathematics/blob/main/images/rootfinding.png" width="83%">
