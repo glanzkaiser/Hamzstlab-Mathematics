@@ -1,6 +1,28 @@
 # Hamzstlab-Mathematics
 Interactive plotting library for Mathematics learning.
 
+# Status
+
+:sunflower: = Done
+
+:writing_hand: = On Progress
+
+| Status | Name | Details |
+| -------------     | ------------- | ------------- | 
+|:sunflower:   | Add basic demo for implot, imnodes, implot 3D				| Done
+|:sunflower:   | Root Finding: Bisection and Newton' Method    				| Done
+|:sunflower:   | First order differential equation: Euler' method      			| Done
+|:writing_hand:| Minimization with gradient descent and Newton' Method			| Not yet
+|:writing_hand:| Approximation with Lagrange interpolation, cubic-spline, Fourier series| Not yet
+|:writing_hand:| Numerical integration with Simpson's rule, Romberg integration		| Not yet
+|:writing_hand:| Boundary value problems						| Not yet
+|:writing_hand:| PDE: Heat equation							| Not yet
+|:writing_hand:| PDE: Wave equation							| Not yet
+|:writing_hand:| Gene Sequence								| Not yet
+|:writing_hand:| Genetic Algorithms							| Not yet
+|:writing_hand:| Statistics								| Not yet
+
+
 # Manual Book
 
 <a href="https://github.com/glanzkaiser/Hamzstplot/blob/main/Hamzstlab%20Mathematics%20and%20Hamzstplot.pdf">Click</a>
@@ -60,13 +82,13 @@ make
 ./perlin
 ```
 
-
 # Current Plot and Simulation
 
 | Name | Simulation |
 | -------------     | ------------- | 
 | PilotProject      | <img src="https://github.com/glanzkaiser/Hamzstlab-Mathematics/blob/main/images/HamzstlabMath.gif" width="83%">
 | 3D Test 	    | <img src="https://github.com/glanzkaiser/Hamzstlab-Mathematics/blob/main/images/HamzstlabMath3d.gif" width="83%">
+| Imnodes Test	    | <img src="https://github.com/glanzkaiser/Hamzstlab-Mathematics/blob/main/images/imnodestest.png" width="83%">
 | Implot Demo 	    | <img src="https://github.com/glanzkaiser/Hamzstlab-Mathematics/blob/main/images/ImplotDemo.gif" width="83%">
 | Spectogram 	    | <img src="https://github.com/glanzkaiser/Hamzstlab-Mathematics/blob/main/images/implotdemos.gif" width="83%">
 | Euler's Method    | <img src="https://github.com/glanzkaiser/Hamzstlab-Mathematics/blob/main/images/1storderDE.png" width="83%">
