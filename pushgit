@@ -1,5 +1,5 @@
 git add .
-git commit -m "Glanz-Freya-Hamzst' Projects"
+git commit -m "Glanz-Freya-Hamzst-Lasthrim' Projects"
 git branch -M main
 git remote add origin https://github.com/glanzkaiser/Hamzstlab-Mathematics.git
 git push -u origin main

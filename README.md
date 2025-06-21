@@ -27,6 +27,18 @@ Interactive plotting library for Mathematics learning.
 
 <a href="https://github.com/glanzkaiser/Hamzstplot/blob/main/Hamzstlab%20Mathematics%20and%20Hamzstplot.pdf">Click</a>
 
+| Status | Name | Details |
+| -------------     | ------------- | ------------- | 
+|:writing_hand:| Intermediate Calculus	        					| Not yet
+|:writing_hand:| Differential Equations		       					| Not yet
+|:writing_hand:| Partial Differential Equations	     					| Not yet
+|:writing_hand:| Probability and Data Analysis        					| Not yet
+|:writing_hand:| Linear and Nonlinear Programming    					| Not yet
+|:writing_hand:| Introduction to Theory of Interest and Financial Mathematics		| Not yet
+|:writing_hand:| Introduction to Stochastic Processes					| Not yet
+|:writing_hand:| Numerical Analysis		     					| Not yet
+|:writing_hand:| Complex Numbers		      					| Not yet
+
 ## Dependencies
 [imgui v 1.92.0 WIP](https://github.com/ocornut/imgui)
 [implot](https://github.com/epezent/implot)
