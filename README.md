@@ -105,3 +105,4 @@ make
 | Spectogram 	    | <img src="https://github.com/glanzkaiser/Hamzstlab-Mathematics/blob/main/images/implotdemos.gif" width="83%">
 | Euler's Method    | <img src="https://github.com/glanzkaiser/Hamzstlab-Mathematics/blob/main/images/1storderDE.png" width="83%">
 | Root Finding	    | <img src="https://github.com/glanzkaiser/Hamzstlab-Mathematics/blob/main/images/rootfinding.png" width="83%">
+| Mortgage Loan	    | <img src="https://github.com/glanzkaiser/Hamzstlab-Mathematics/blob/main/images/MortgageLoanCUPULU.gif" width="83%">

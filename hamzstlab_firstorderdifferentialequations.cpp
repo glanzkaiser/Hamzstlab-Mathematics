@@ -491,6 +491,86 @@ void Demo_CompoundInterest() {
 
 //-----------------------------------------------------------------------------
 
+void Demo_MortgageLoan() {
+	static int t = 20, t1 = 1;
+	static float xs1[100], ys1[100], ys2[100], ys3[100];
+	static float r = 0.06;
+	static int k = 500;
+	for (int i = 1; i <= t; ++i) {
+	xs1[i] = i;
+	ys1[i] = (12*k/r) - (12*k/r)*(exp(-r*i)) ;
+	ys2[i] = i*(12*k) - ys1[i];
+	ys3[i] = i*(12*k); // Total payment
+	}
+
+	static ImVec4 color1 = ImVec4(0.133,0.545,0.133,1); // Forest green
+	static ImVec4 color2 = ImVec4(0,0.808,0.82,1); // Dark turquoise
+	static ImVec4 color3 = ImVec4(0.855,0.647,0.125,1); // Goldenrod
+	static float  thickness = 1;
+	static int shade_mode = 0;
+	static ImPlotShadedFlags flags = 0;
+	static bool show_lines = true;
+    	static bool show_fills = true;
+    	static bool range = false, details = false;
+	ImGui::Text("Monthly payment = %4.0d", k);
+	ImGui::Text("Annual payment = %4.0d ", k*12);
+	ImGui::Checkbox("Change parameters", &range);
+	ImGui::Checkbox("Payment details", &details);
+    	ImGui::Checkbox("Lines",&show_lines); ImGui::SameLine();
+	ImGui::Checkbox("Fills",&show_fills);
+
+	if (range) {
+	ImGui::SetNextItemWidth(200);
+	ImGui::BulletText("Monthly Payment");
+	ImGui::SliderInt("##Monthly Payment", &k, 100, 10000);
+	ImGui::SetNextItemWidth(200);
+	ImGui::BulletText("Length of Mortgage");
+	ImGui::SliderInt("##Length of Mortgage", &t, 5, 50);
+	ImGui::SetNextItemWidth(200);
+	ImGui::BulletText("Return Rate");
+	ImGui::DragFloat("##Return rate", &r, 0.01f, 0.2f);
+	ImGui::SetNextItemWidth(200);
+	}
+	if (details) {
+	ImGui::SetNextItemWidth(200);
+	ImGui::BulletText("Time / t");
+	ImGui::SliderInt("##Time / t", &t1, 1, t);
+	ImGui::Text("Total amount borrowed = %.3f ", ys1[t1]);
+	ImGui::Text("Interest paid = %.3f ", ys2[t1]);
+	ImGui::Text("Total payment = %.3f ", ys3[t1]);
+	}
+
+	if (ImPlot::BeginPlot("Mortgage Loan Accumulation")) {
+	ImPlot::SetupAxes("t","S(t)");
+	ImPlot::SetupAxesLimits(0, 30, 0, 200000);
+	ImPlot::SetupLegend(ImPlotLocation_East, ImPlotLegendFlags_Outside);
+        
+	
+	if (show_fills) {
+		ImPlot::PushStyleVar(ImPlotStyleVar_FillAlpha, 0.23f);
+		ImPlot::SetNextFillStyle(color2);
+		ImPlot::PlotShaded("Amount borrowed", xs1, ys1, t+1, shade_mode == 0, flags);
+		ImPlot::SetNextFillStyle(color3);
+		ImPlot::PlotShaded("Interest paid", xs1, ys2, t+1, shade_mode == 0, flags);
+		ImPlot::SetNextFillStyle(color1);
+		ImPlot::PlotShaded("Total payment", xs1, ys3, t+1, shade_mode == 0, flags);
+		ImPlot::PopStyleVar();
+        }
+        if (show_lines) {
+		ImPlot::SetNextLineStyle(color2, thickness);
+		ImPlot::PlotLine("Amount borrowed", xs1, ys1, t+1);
+		ImPlot::SetNextLineStyle(color3, thickness);
+		ImPlot::PlotLine("Interest paid", xs1, ys2, t+1);
+		ImPlot::SetNextLineStyle(color1, thickness);
+		ImPlot::PlotLine("Total payment", xs1, ys3, t+1);
+		
+	
+        }
+	ImPlot::EndPlot();
+    }
+}
+
+//-----------------------------------------------------------------------------
 void Demo_LogisticGrowth() {
 	static float xs1[1001], ys1[1001],ys2[1001],ys3[1001],ys4[1001],ys5[1001];
 	static int y01 = 1, y02 = 2, y03 = 3, y04 = 6, y05 = 7;
@@ -752,6 +832,7 @@ void ShowFirstOrderDEWindow(bool* p_open) {
     if (ImGui::BeginTabBar("ImPlotDemoTabs")) {
         if (ImGui::BeginTabItem("Plots")) {
 	    DemoHeader("Compound Interest", Demo_CompoundInterest);
+            DemoHeader("Mortgage Loan", Demo_MortgageLoan);
             DemoHeader("Logistic Growth", Demo_LogisticGrowth);
             DemoHeader("Direction Fields", Demo_DirectionFields);
             DemoHeader("Direction Fields 2", Demo_DirectionFields2);
