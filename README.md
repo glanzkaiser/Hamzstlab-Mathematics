@@ -1,6 +1,8 @@
 # Hamzstlab-Mathematics
 Interactive plotting library for Mathematics learning.
 
+<img src="https://github.com/glanzkaiser/Hamzstlab-Mathematics/blob/main/images/HamzstlabLogo972.png" width="51%">
+
 # Status
 
 :sunflower: = Done
