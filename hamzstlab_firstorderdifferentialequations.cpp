@@ -35,6 +35,8 @@
 #include <stdlib.h>
 #include <time.h>
 
+#include "symintegrationc++.h"
+
 #ifdef _MSC_VER
 #define sprintf sprintf_s
 #endif
@@ -571,6 +573,105 @@ void Demo_MortgageLoan() {
 }
 
 //-----------------------------------------------------------------------------
+double division(double x, double y)
+{
+	return x/y;
+}
+void Demo_RadiocarbonDating() {
+	static int half_life=5730, t1 = 20;
+	static double xt1[50000], qt[50000];
+	double r = -(division(1,half_life))*log(0.5);
+	for (int i = 1; i <= 50000; ++i) {
+	xt1[i] = i;
+	qt[i] = 1*exp(-r*i) ;
+	}
+
+	//static ImVec4 color1 = ImVec4(0.133,0.545,0.133,1); // Forest green
+	static ImVec4 color2 = ImVec4(0,0.808,0.82,1); // Dark turquoise
+	//static ImVec4 color3 = ImVec4(0.855,0.647,0.125,1); // Goldenrod
+	static float  thickness = 1;
+    	static bool range = true;
+
+	ImGui::Checkbox("Change parameters", &range);
+
+	if (range) {
+	ImGui::SetNextItemWidth(200);
+	ImGui::BulletText("Half-life of carbon-14 (years)");
+	ImGui::SliderInt("##Half-life of carbon-14 (years)", &half_life, 100, 10000);
+	ImGui::SetNextItemWidth(200);
+	ImGui::BulletText("Residual amount of cabon-14 in the remains (in percentage)");
+	ImGui::SliderInt("##Residual amount of carbon-14 in the remains (%) ", &t1, 1, 100);
+	ImGui::Text("Age of remains = %.5f ", log(division(t1,100))/(-r));
+	ImGui::Text("Rate of decay = %.10f ", r);
+	}
+
+	if (ImPlot::BeginPlot("Radiocarbon Dating with carbon-14")) {
+	ImPlot::SetupAxes("t","Q(t)");
+	ImPlot::SetupAxesLimits(0, 30000, 0, 1);
+	ImPlot::SetupLegend(ImPlotLocation_East, ImPlotLegendFlags_Outside);
+        
+       	ImPlot::SetNextLineStyle(color2, thickness);
+	ImPlot::PlotLine("Q(t)=Q_{0}exp(-rt)", xt1, qt, 50000);		
+        
+	ImPlot::EndPlot();
+    }
+}
+
+//-----------------------------------------------------------------------------
+
+void Demo_NewtonLawofCooling() {
+	static int T0=200, T_room = 70, Tt = 190, t = 1, Ts = 150;
+	static double xt[500], yt[500];
+	int a = Tt - T_room; 
+	double C = T0 - T_room;
+	double k = -log(division(a,C))/t;
+	double t_final = -log(division(Ts-T_room,C))/k;
+	for (int i = 1; i <= 500; ++i) {
+	xt[i] = i;
+	yt[i] = T_room + C*exp(-k*i) ;
+	}
+	xt[0] =0;
+	yt[0] = T0;
+
+	//static ImVec4 color1 = ImVec4(0.133,0.545,0.133,1); // Forest green
+	static ImVec4 color2 = ImVec4(0,0.808,0.82,1); // Dark turquoise
+	//static ImVec4 color3 = ImVec4(0.855,0.647,0.125,1); // Goldenrod
+	static float  thickness = 1;
+    	static bool range = true;
+
+	ImGui::Checkbox("Change parameters", &range);
+
+	if (range) {
+	ImGui::SetNextItemWidth(200);
+	ImGui::BulletText("Initial temperature of a cup of coffee (in Fahrenheit)");
+	ImGui::SliderInt("##Initial temperature of a cup of coffee (in Fahrenheit)", &T0, 0, 500);
+	ImGui::SetNextItemWidth(200);
+	ImGui::BulletText("The time of measurement till the temperature of a cup of coffee goes down (in minutes)");
+	ImGui::SliderInt("##The time of measurement till the temperature of a cup of coffee goes down (in minutes)", &t, 1, 60);
+	ImGui::SetNextItemWidth(200);
+	ImGui::BulletText("The temperature of a cup of coffee after t minute (in Fahrenheit)");
+	ImGui::SliderInt("##The temperature of a cup of coffee after t minute (in Fahrenheit)", &Tt, 0, 500);
+	ImGui::SetNextItemWidth(200);
+	ImGui::BulletText("The temperature of a cup of coffee after t+s minute (in Fahrenheit)");
+	ImGui::SliderInt("##The temperature of a cup of coffee after t+s minute (in Fahrenheit)", &Ts, 0, 500);
+	ImGui::Text("Time till the temperature goes down to T(s), t+s = %.5f ", t_final);
+	ImGui::Text("Rate of cooling, k = %.10f ", k);
+	}
+
+	if (ImPlot::BeginPlot("Newton's Law of Cooling")) {
+	ImPlot::SetupAxes("t (minutes)","T(t)");
+	ImPlot::SetupAxesLimits(0, 60, 0, 250);
+	ImPlot::SetupLegend(ImPlotLocation_East, ImPlotLegendFlags_Outside);
+        
+       	ImPlot::SetNextLineStyle(color2, thickness);
+	ImPlot::PlotLine("T(t)=T_{room} + C*exp(-kt)", xt, yt, 500);		
+        
+	ImPlot::EndPlot();
+    }
+}
+
+//-----------------------------------------------------------------------------
+
 void Demo_LogisticGrowth() {
 	static float xs1[1001], ys1[1001],ys2[1001],ys3[1001],ys4[1001],ys5[1001];
 	static int y01 = 1, y02 = 2, y03 = 3, y04 = 6, y05 = 7;
@@ -833,6 +934,8 @@ void ShowFirstOrderDEWindow(bool* p_open) {
         if (ImGui::BeginTabItem("Plots")) {
 	    DemoHeader("Compound Interest", Demo_CompoundInterest);
             DemoHeader("Mortgage Loan", Demo_MortgageLoan);
+	    DemoHeader("Radiocarbon Dating", Demo_RadiocarbonDating);	
+            DemoHeader("Newton's Law of Cooling", Demo_NewtonLawofCooling);	
             DemoHeader("Logistic Growth", Demo_LogisticGrowth);
             DemoHeader("Direction Fields", Demo_DirectionFields);
             DemoHeader("Direction Fields 2", Demo_DirectionFields2);
