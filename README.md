@@ -108,3 +108,5 @@ make
 | Euler's Method    | <img src="https://github.com/glanzkaiser/Hamzstlab-Mathematics/blob/main/images/1storderDE.png" width="83%">
 | Root Finding	    | <img src="https://github.com/glanzkaiser/Hamzstlab-Mathematics/blob/main/images/rootfinding.png" width="83%">
 | Mortgage Loan	    | <img src="https://github.com/glanzkaiser/Hamzstlab-Mathematics/blob/main/images/MortgageLoanCUPULU.gif" width="83%">
+| Radiocarbon Dating| <img src="https://github.com/glanzkaiser/Hamzstlab-Mathematics/blob/main/images/radiocarbondatingfinal.gif" width="83%">
+| Law of Cooling    | <img src="https://github.com/glanzkaiser/Hamzstlab-Mathematics/blob/main/images/NewtonLoC.gif" width="83%">
