@@ -672,6 +672,197 @@ void Demo_NewtonLawofCooling() {
 
 //-----------------------------------------------------------------------------
 
+void Demo_PollutantInGreatLakes() {
+	static int t = 10; 
+	static float r = 175,V = 0.46, P = 60, k = 28.5, c0 = 100.0;
+	static double xt[500], yt[500], yt2[500];
+	//double C = (1000*V)*(c0 - k - division(P,r));
+	double t_superior = -(division(12.2,65.2))*1000*log(division(t,100));
+	double t_michigan = -(division(4.9,158))*1000*log(division(t,100));
+	double t_erie = -(division(0.46,175))*1000*log(division(t,100));
+	double t_ontario = -(division(1.6,209))*1000*log(division(t,100));
+	for (int i = 1; i <= 500; ++i) {
+	xt[i] = i;
+	yt[i] = k + (division(P,r)) + (c0-k-division(P,r))*exp(-r*i/(1000*V)) ;
+	yt2[i] = c0*exp(-r*i/(1000*V)) ;
+	}
+	xt[0] =0;
+	yt[0] = k + (division(P,r)) ;
+	yt2[0] = c0;
+	static ImVec4 color1 = ImVec4(0.133,0.545,0.133,1); // Forest green
+	static ImVec4 color2 = ImVec4(0,0.808,0.82,1); // Dark turquoise
+	//static ImVec4 color3 = ImVec4(0.855,0.647,0.125,1); // Goldenrod
+	static float  thickness = 1;
+    	static bool range = true;
+
+	ImGui::Checkbox("Change parameters", &range);
+
+	if (range) {
+	ImGui::SetNextItemWidth(200);
+	ImGui::BulletText("Initial concentration of the pollutant (c0)");
+	ImGui::DragFloat("##Initial concentration of the pollutant (c0)", &c0, 1.0f, 150.0f);
+	ImGui::SetNextItemWidth(200);
+	ImGui::BulletText("Percentage of concentration of the pollutant left after T time");
+	ImGui::SliderInt("##Percentage of concentration of the pollutant left after T time", &t, 0, 100);
+	ImGui::SetNextItemWidth(200);
+	ImGui::BulletText("Flow Rate / r (km^3 / year)");
+	ImGui::DragFloat("##Flow Rate / r", &r, 1.0f, 250.0f);
+	ImGui::SetNextItemWidth(200);
+	ImGui::BulletText("Volume / V (km^3 X 10^3)");
+	ImGui::DragFloat("##Volume / V", &V, 0.1f, 25.0f);
+	ImGui::SetNextItemWidth(200);
+	ImGui::BulletText("Pollutant added directly rate (P)");
+	ImGui::DragFloat("##Pollutant added directly rate (P)", &P, 1.0f, 250.0f);
+	ImGui::SetNextItemWidth(200);
+	ImGui::BulletText("Concentration of pollutant entering the lake at rate r  (k)");
+	ImGui::DragFloat("##Concentration of pollutant entering the lake at rate r  (k)", &k, 1.0f, 150.0f);
+	
+	ImGui::Text("Time till lake Superior reaches certain percentage of pollutant, T = %.5f ", t_superior);
+	ImGui::Text("Time till lake Michigan reaches certain percentage of pollutant, T = %.5f ", t_michigan);
+	ImGui::Text("Time till lake Erie reaches certain percentage of pollutant, T = %.5f ", t_erie);
+	ImGui::Text("Time till lake Ontario reaches certain percentage of pollutant, T = %.5f ", t_ontario);
+	}
+
+	if (ImPlot::BeginPlot("Pollutant in Great Lakes")) {
+	ImPlot::SetupAxes("t","c(t) (in %)");
+	ImPlot::SetupAxesLimits(0, 10, 0, 100);
+	ImPlot::SetupLegend(ImPlotLocation_East, ImPlotLegendFlags_Outside);
+        
+       	ImPlot::SetNextLineStyle(color2, thickness);
+	ImPlot::PlotLine("c(t)=k +P/r + ( c0 - k - (P/r) )*exp(-rt/V), pollutant keeps coming in", xt, yt, 500);		
+        ImPlot::SetNextLineStyle(color1, thickness);
+	ImPlot::PlotLine("c(t)= c0*V*exp(-rt/V), if the pollutant stops entering", xt, yt2, 500);		
+        
+	ImPlot::EndPlot();
+    }
+}
+
+//-----------------------------------------------------------------------------
+
+void Demo_SkyDiver() {
+	static int t = 10, W = 180, h = 5000, b=12; 
+	static float a = 0.75, g = 9.81, cg = 3.28;
+	float m = division(W,g*cg);
+	static double xt[1000], xt2[1000], yt[1000], vt[1000], yt2[1000], vt2[1000];
+	double C1 = division(W,a);
+	double C3 = division(W,b) - division(W,a)*(1-exp(-division(a*t,m)));
+	double C4 = h + division(W*m,a*a);
+	double C6 = -division(W,a)*(t+division(m,a)*exp(-division(a*t,m))) + C4 + (C3)*division(m,b);
+
+	// Finding the time till the diver reaches the ground
+	//cout << "\n*** Newton's Method ***\n" <<endl;
+	double pn;
+	double p0 = 10;
+	int N = 20;
+	
+	//cout << setw(6) << "n" << "\t\t" << "p_{n}"   << "\n";
+	//cout << setprecision(14) << setw(6) << "0" << "\t\t" << p0  << "\n";	
+	for (int i = 1; i <=N; i++)
+	{
+		double fp = -division(W,b)*(p0-t) - division(C3*m,b)*exp(-division(b*(p0-t),m)) + C6;
+		double fpd = -division(W,b)+C3*exp(-division(b*(p0-t),m));
+		pn = p0 - (fp/fpd);
+		//cout << setprecision(14) << setw(6) << i << "\t\t" << pn << "\n";
+		double err = p0-pn;
+		if (abs(err) < pow(10,-5))
+		{
+	//		cout << "The procedure was successful." << endl;	
+	//		cout << "*****************************" << endl;			
+			break;
+		}
+		p0 = pn;
+	}
+	double t_value = p0;
+	// ********************************************End of Newton's Method ********************************************
+	// before the parachute opens
+	for (int i = 0; i <= t; ++i) {
+	xt[i] = i;
+	yt[i] = -division(W,a)*i - division(C1*m,a)*exp(-division(a*i,m)) +C4;
+	vt[i] = -division(W,a) + C1*exp(-division(a*i,m)) ;
+	}
+	double h_open = yt[t];
+	//double vl = -division(W,b);
+	// after the parachute opens
+	for (int i = 0; i <= 1000; ++i) {
+	xt2[i] = i;
+	if(i<=t)
+	{
+		yt2[i] = -division(W,a)*i - division(C1*m,a)*exp(-division(a*i,m)) +C4;
+		vt2[i] = -division(W,a) + C1*exp(-division(a*i,m)) ;
+	}
+	if(i>=t)
+	{
+		yt2[i] = -division(W,b)*(i-t) - division(C3*m,b)*exp(-division(b*(i-t),m)) + C6;
+		vt2[i] = -division(W,b) + C3*exp(-division(b*(i-t),m)) ;
+	}
+	}
+	
+	static ImVec4 color1 = ImVec4(0.133,0.545,0.133,1); // Forest green
+	static ImVec4 color2 = ImVec4(0,0.808,0.82,1); // Dark turquoise
+	//static ImVec4 color3 = ImVec4(0.855,0.647,0.125,1); // Goldenrod
+	static float  thickness = 1;
+    	static bool range = true;
+
+	ImGui::Checkbox("Change parameters (in ft, lb, s)", &range);
+
+	if (range) {
+	ImGui::SetNextItemWidth(200);
+	ImGui::BulletText("Magnitude when the parachute is closed (a) -> a|v|");
+	ImGui::DragFloat("##Magnitude when the parachute is closed (a) -> a|v|", &a, 0.1f, 1.0f);
+	ImGui::SetNextItemWidth(200);
+	ImGui::BulletText("Magnitude when the parachute is opened (b) -> b|v|");
+	ImGui::SliderInt("##Magnitude when the parachute is opened (b) -> b|v|", &b, 10, 50);
+	ImGui::SetNextItemWidth(200);
+	ImGui::BulletText("Weight of the sky diver (W)");
+	ImGui::SliderInt("##Weight", &W, 1, 1000);
+	ImGui::SetNextItemWidth(200);
+	ImGui::BulletText("Time till the parachute opens (t)");
+	ImGui::SliderInt("##Time till the parachute opens", &t, 1, 100);
+	ImGui::SetNextItemWidth(200);
+	ImGui::BulletText("Starting height (h)");
+	ImGui::SliderInt("##Starting height", &h, 1000, 10000);
+	ImGui::SetNextItemWidth(200);
+	
+	ImGui::Text("C1 = %.5f ", C1);
+	ImGui::Text("C3 = %.5f ", C3);
+	ImGui::Text("C4 = %.5f ", C4);
+	ImGui::Text("C6 = %.5f ", C6);
+	ImGui::Text("Time till the sky diver reaches the ground = %.5f ", t_value);
+	ImGui::Text("The parachute opens at height = %.2f ", h_open);
+	
+	}
+
+	if (ImPlot::BeginPlot("Sky Diver")) {
+	ImPlot::SetupAxes("t (seconds)","y(t) (feet)");
+	ImPlot::SetupAxesLimits(0, 300, 0, h);
+	ImPlot::SetupLegend(ImPlotLocation_East, ImPlotLegendFlags_Outside);
+        
+       	ImPlot::SetNextLineStyle(color2, thickness);
+	ImPlot::PlotLine("y(t)_{before}, 0 <= t <= t_{open}", xt, yt, t);		
+        ImPlot::SetNextLineStyle(color1, thickness);
+	ImPlot::PlotLine("y(t)_{after}, t_{open} <= t <= t_{arrive} ", xt2, yt2, 1000);		
+        
+	ImPlot::EndPlot();
+
+	ImPlot::BeginPlot("Sky Diver v(t)");
+	ImPlot::SetupAxes("t (seconds)","v(t) (feet)");
+	ImPlot::SetupAxesLimits(0, 300, 0, -200);
+	ImPlot::SetupLegend(ImPlotLocation_East, ImPlotLegendFlags_Outside);
+        
+       	ImPlot::SetNextLineStyle(color2, thickness);
+	ImPlot::PlotLine("v(t)_{before}, 0 <= t <= t_{open}", xt, vt, t);		
+        ImPlot::SetNextLineStyle(color1, thickness);
+	ImPlot::PlotLine("v(t)_{after}, t_{open} <= t <= t_{arrive} ", xt2, vt2, 1000);		
+        
+	
+	ImPlot::EndPlot();
+    }
+	
+	
+}
+
+//-----------------------------------------------------------------------------
+
 void Demo_LogisticGrowth() {
 	static float xs1[1001], ys1[1001],ys2[1001],ys3[1001],ys4[1001],ys5[1001];
 	static int y01 = 1, y02 = 2, y03 = 3, y04 = 6, y05 = 7;
@@ -936,6 +1127,8 @@ void ShowFirstOrderDEWindow(bool* p_open) {
             DemoHeader("Mortgage Loan", Demo_MortgageLoan);
 	    DemoHeader("Radiocarbon Dating", Demo_RadiocarbonDating);	
             DemoHeader("Newton's Law of Cooling", Demo_NewtonLawofCooling);	
+            DemoHeader("Pollutant in Great Lakes", Demo_PollutantInGreatLakes);	
+            DemoHeader("Sky Diver", Demo_SkyDiver);	
             DemoHeader("Logistic Growth", Demo_LogisticGrowth);
             DemoHeader("Direction Fields", Demo_DirectionFields);
             DemoHeader("Direction Fields 2", Demo_DirectionFields2);

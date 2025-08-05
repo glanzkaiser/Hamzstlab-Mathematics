@@ -110,3 +110,5 @@ make
 | Mortgage Loan	    | <img src="https://github.com/glanzkaiser/Hamzstlab-Mathematics/blob/main/images/MortgageLoanCUPULU.gif" width="83%">
 | Radiocarbon Dating| <img src="https://github.com/glanzkaiser/Hamzstlab-Mathematics/blob/main/images/radiocarbondatingfinal.gif" width="83%">
 | Law of Cooling    | <img src="https://github.com/glanzkaiser/Hamzstlab-Mathematics/blob/main/images/NewtonLoC.gif" width="83%">
+| Pollutant in Great Lakes    | <img src="https://github.com/glanzkaiser/Hamzstlab-Mathematics/blob/main/images/pollutantingreatlakes.gif" width="83%">
+| Sky Diver	    | <img src="https://github.com/glanzkaiser/Hamzstlab-Mathematics/blob/main/images/SkyDiverfinal.gif" width="83%">
