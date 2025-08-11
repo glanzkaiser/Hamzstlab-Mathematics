@@ -581,6 +581,10 @@ IMPLOT3D_API ImVec4 SampleColormap(float t, ImPlot3DColormap cmap = IMPLOT3D_AUT
 
 // Shows the ImPlot3D demo window
 IMPLOT3D_API void ShowDemoWindow(bool* p_open = nullptr);
+
+// Shows the minimization demo window (add hamzstlab_minimization.cpp to your sources!)
+IMPLOT3D_API void ShowMinimizationWindow(bool* p_open = nullptr);
+
 // Shows all ImPlot3D demos, without enclosing window
 IMPLOT3D_API void ShowAllDemos();
 

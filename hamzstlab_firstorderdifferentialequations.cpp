@@ -780,6 +780,7 @@ void Demo_SkyDiver() {
 	yt[i] = -division(W,a)*i - division(C1*m,a)*exp(-division(a*i,m)) +C4;
 	vt[i] = -division(W,a) + C1*exp(-division(a*i,m)) ;
 	}
+	
 	double h_open = yt[t];
 	//double vl = -division(W,b);
 	// after the parachute opens
@@ -796,7 +797,9 @@ void Demo_SkyDiver() {
 		vt2[i] = -division(W,b) + C3*exp(-division(b*(i-t),m)) ;
 	}
 	}
-	
+	xt[0]=0;
+	yt[0]=h;
+
 	static ImVec4 color1 = ImVec4(0.133,0.545,0.133,1); // Forest green
 	static ImVec4 color2 = ImVec4(0,0.808,0.82,1); // Dark turquoise
 	//static ImVec4 color3 = ImVec4(0.855,0.647,0.125,1); // Goldenrod
@@ -859,6 +862,87 @@ void Demo_SkyDiver() {
     }
 	
 	
+}
+
+//-----------------------------------------------------------------------------
+
+void Demo_BaseballinFlight() {
+	static int u=125; 
+	static float r = 0.2, h = 3, g = 32, c=0.01;
+	static double xt[1000], xt2[1000], xt3[1000], xt4[1000], yt[1000], yt2[1000], yt3[1000], yt4[1000];
+	for (int i = 0; i <= 1000; ++i) { // Parametric plotting so we use i*c to make it smooth.
+	xt[i] = division(u,r)*(1-exp(-r*(i*c)))*cosf(division(PI*20,180));
+	xt2[i] = division(u,r)*(1-exp(-r*(i*c)))*cosf(division(PI*30,180));
+	xt3[i] = division(u,r)*(1-exp(-r*(i*c)))*cosf(division(PI*40,180));
+	xt4[i] = division(u,r)*(1-exp(-r*(i*c)))*cosf(division(PI*60,180));
+	yt[i] = h-division(g,r)*(i*c) + division(1,r)*(division(g,r) + u*sinf(division(PI*20,180)))*(1-exp(-r*(i*c))) ;
+	yt2[i] = h-division(g,r)*(i*c) + division(1,r)*(division(g,r) + u*sinf(division(PI*30,180)))*(1-exp(-r*(i*c))) ;
+	yt3[i] = h-division(g,r)*(i*c) + division(1,r)*(division(g,r) + u*sinf(division(PI*40,180)))*(1-exp(-r*(i*c))) ;
+	yt4[i] = h-division(g,r)*(i*c) + division(1,r)*(division(g,r) + u*sinf(division(PI*60,180)))*(1-exp(-r*(i*c))) ;
+	}
+	if(r==0) // Because the solution above will have division by zero if r==0 so we put this conditional
+	{
+		for (int i = 0; i <= 1000; ++i) { // Parametric plotting so we use i*c to make it smooth.
+		xt[i] = u*cosf(division(PI*20,180))*(i*c);
+		xt2[i] = u*cosf(division(PI*30,180))*(i*c);
+		xt3[i] = u*cosf(division(PI*40,180))*(i*c);
+		xt4[i] = u*cosf(division(PI*60,180))*(i*c);
+		yt[i] = -0.5*g*(i*c)*(i*c) + (u*sinf(division(PI*20,180)))*(i*c) + h;
+		yt2[i] = -0.5*g*(i*c)*(i*c) + (u*sinf(division(PI*30,180)))*(i*c) + h ;
+		yt3[i] = -0.5*g*(i*c)*(i*c) + (u*sinf(division(PI*40,180)))*(i*c) + h ;
+		yt4[i] = -0.5*g*(i*c)*(i*c) + (u*sinf(division(PI*60,180)))*(i*c) + h ;
+		}
+	}
+	xt[0] = 0;
+	yt[0] = h;
+	xt2[0] = 0;
+	yt2[0] = h;
+	xt3[0] = 0;
+	yt3[0] = h;
+	xt4[0] = 0;
+	yt4[0] = h;
+	
+	static ImVec4 color1 = ImVec4(0.133,0.545,0.133,1); // Forest green
+	static ImVec4 color2 = ImVec4(0,0.808,0.82,1); // Dark turquoise
+	static ImVec4 color3 = ImVec4(0.855,0.647,0.125,1); // Goldenrod
+	static ImVec4 color4= ImVec4(0.3921,0.5843,0.9294,1); // cornflower
+	static float  thickness = 1;
+    	static bool range = true;
+
+	ImGui::Checkbox("Change parameters (in ft, s)", &range);
+
+	if (range) {
+	ImGui::SetNextItemWidth(200);
+	ImGui::BulletText("Coefficient of air resistance (r)");
+	ImGui::DragFloat("##Coefficient of air resistance (r)", &r, 0.01f, 1.0f);
+	ImGui::SetNextItemWidth(200);
+	ImGui::BulletText("Initial velocity (u)");
+	ImGui::SliderInt("##Initial velocity (u)", &u, 50, 500);
+	ImGui::SetNextItemWidth(200);
+	ImGui::BulletText("Initial height (h)");
+	ImGui::DragFloat("##Initial height (h)", &h, 1.0f, 10.0f);
+	ImGui::SetNextItemWidth(200);
+	
+	//ImGui::Text("Time till lake Erie reaches certain percentage of pollutant, T = %.5f ", t_erie);
+	//ImGui::Text("Time till lake Ontario reaches certain percentage of pollutant, T = %.5f ", t_ontario);
+	}
+
+	if (ImPlot::BeginPlot("Baseball in Flight")) {
+	ImPlot::SetupAxes("x(t)","y(t)");
+	ImPlot::SetupAxesLimits(0, 500, 0, 200);
+	ImPlot::SetupLegend(ImPlotLocation_East, ImPlotLegendFlags_Outside);
+        
+       	ImPlot::SetNextLineStyle(color2, thickness);
+	ImPlot::PlotLine("A = 20 degree", xt, yt, 1000);		
+        ImPlot::SetNextLineStyle(color1, thickness);
+	ImPlot::PlotLine("A = 30 degree", xt2, yt2, 1000);		
+        ImPlot::SetNextLineStyle(color3, thickness);
+	ImPlot::PlotLine("A = 40 degree", xt3, yt3, 1000);		
+        ImPlot::SetNextLineStyle(color4, thickness);
+	ImPlot::PlotLine("A = 60 degree", xt4, yt4, 1000);		
+        
+	ImPlot::EndPlot();
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -1129,6 +1213,7 @@ void ShowFirstOrderDEWindow(bool* p_open) {
             DemoHeader("Newton's Law of Cooling", Demo_NewtonLawofCooling);	
             DemoHeader("Pollutant in Great Lakes", Demo_PollutantInGreatLakes);	
             DemoHeader("Sky Diver", Demo_SkyDiver);	
+            DemoHeader("Baseball in Flight", Demo_BaseballinFlight);	
             DemoHeader("Logistic Growth", Demo_LogisticGrowth);
             DemoHeader("Direction Fields", Demo_DirectionFields);
             DemoHeader("Direction Fields 2", Demo_DirectionFields2);

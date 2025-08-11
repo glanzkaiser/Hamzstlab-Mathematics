@@ -1251,6 +1251,12 @@ IMPLOT_API void ShowMetricsWindow(bool* p_popen = nullptr);
 // Shows the ImPlot demo window (add implot_demo.cpp to your sources!)
 IMPLOT_API void ShowDemoWindow(bool* p_open = nullptr);
 
+// Shows the first order differential equations demo window (add hamzstlab_firstorderdifferentialequations.cpp to your sources!)
+IMPLOT_API void ShowFirstOrderDEWindow(bool* p_open = nullptr);
+
+// Shows the root finding demo window (add hamzstlab_rootfinding.cpp to your sources!)
+IMPLOT_API void ShowRootFindingWindow(bool* p_open = nullptr);
+
 }  // namespace ImPlot
 
 //-----------------------------------------------------------------------------

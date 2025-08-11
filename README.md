@@ -14,6 +14,7 @@ Interactive plotting library for Mathematics learning.
 |:sunflower:   | Add basic demo for implot, imnodes, implot 3D				| Done
 |:sunflower:   | Root Finding: Bisection and Newton' Method    				| Done
 |:sunflower:   | First order differential equation: Euler' method      			| Done
+|:sunflower:   | Minimization Downhill Simplex						| Done
 |:writing_hand:| Minimization with gradient descent and Newton' Method			| Not yet
 |:writing_hand:| Approximation with Lagrange interpolation, cubic-spline, Fourier series| Not yet
 |:writing_hand:| Numerical integration with Simpson's rule, Romberg integration		| Not yet
@@ -112,3 +113,4 @@ make
 | Law of Cooling    | <img src="https://github.com/glanzkaiser/Hamzstlab-Mathematics/blob/main/images/NewtonLoC.gif" width="83%">
 | Pollutant in Great Lakes    | <img src="https://github.com/glanzkaiser/Hamzstlab-Mathematics/blob/main/images/pollutantingreatlakes.gif" width="83%">
 | Sky Diver	    | <img src="https://github.com/glanzkaiser/Hamzstlab-Mathematics/blob/main/images/SkyDiverfinal.gif" width="83%">
+| Downhill Simples  | <img src="https://github.com/glanzkaiser/Hamzstlab-Mathematics/blob/main/images/DownhillSimplexfinal.gif" width="83%">
