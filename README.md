@@ -15,7 +15,7 @@ Interactive plotting library for Mathematics learning.
 |:sunflower:   | Root Finding: Bisection and Newton' Method    				| Done
 |:sunflower:   | First order differential equation: Euler' method      			| Done
 |:sunflower:   | Minimization with Downhill Simplex method				| Done
-|:writing_hand:| Minimization with gradient descent and Newton' Method			| Not yet
+|:writing_hand:| Minimization with gradient descent and Newton' Method			| Gradient Descent Done, NR not yet
 |:writing_hand:| Approximation with Lagrange interpolation, cubic-spline, Fourier series| Not yet
 |:writing_hand:| Numerical integration with Simpson's rule, Romberg integration		| Not yet
 |:writing_hand:| Boundary value problems						| Not yet
@@ -114,3 +114,4 @@ make
 | Pollutant in Great Lakes    | <img src="https://github.com/glanzkaiser/Hamzstlab-Mathematics/blob/main/images/pollutantingreatlakes.gif" width="83%">
 | Sky Diver	    | <img src="https://github.com/glanzkaiser/Hamzstlab-Mathematics/blob/main/images/SkyDiverfinal.gif" width="83%">
 | Downhill Simplex  | <img src="https://github.com/glanzkaiser/Hamzstlab-Mathematics/blob/main/images/DownhillSimplexfinal.gif" width="83%">
+| Gradient Descent  | <img src="https://github.com/glanzkaiser/Hamzstlab-Mathematics/blob/main/images/GradientDescentfinal.gif" width="83%">

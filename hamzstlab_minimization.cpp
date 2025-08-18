@@ -31,7 +31,7 @@
 #include <fstream>
 #include <bits/stdc++.h> //for setw(6) at display() function
 #include <vector> // For std::vector (example container)
-#include <armadillo>
+#include <eigen3/Eigen/Dense> // header file
 #include "symintegrationc++.h"
 #include <algorithm> // For std::sort
 
@@ -221,34 +221,99 @@ void DemoDownhillSimplexPlot() {
 			}
 		}
 
-		// Code for computation with Armadillo + SymIntegration starts here
+		// Code for computation with Eigen + SymIntegration starts here
 		static float μ = 0.05;
-		arma::vec x0 = {0.1, 0.5} ;
-		arma::vec x1 = {x0[0]+μ, x0[1]+0} ;
-		arma::vec x2 = {x0[0]+0, x0[1]+μ} ;
-
-		static float α = 1, β = 0.5, γ = 2, δ = 0.5;
-		arma::vec c;
-		arma::vec xr;
-		arma::vec xe;
-		arma::vec xd;
-		arma::vec xc;
-		arma::vec s0;
-		arma::vec s1;	
-
 		int num_insidecontraction = 0, num_outsidecontraction = 0, num_expansion = 0, num_reflection = 0, num_shrink = 0;
 		Symbolic x("x"), y("y");
 		Symbolic f_x0, f_x1, f_x2, f_xr, f_xe, f_xc;
-		double fx0, fx1, fx2, fxr, fxe, fxc;
+		Symbolic f_x0_final, f_x1_final,  f_x2_final;  
+		double fx0, fx1, fx2, fxr, fxe, fxc, fx0_final, fx1_final, fx2_final;
 		
-		Symbolic f = exp(-divisionsym(x*x + y*y,2*s*s)) - exp(-divisionsym(x*x + y*y,2*t*t)) + division(1,10)*x*x + division(1,10)*y*y;
-		
-		int Ni = 6; // Number of iteration
+		int Ni = 7; // Number of iteration
 		int n = 2; // number of  simplex points
 
+		Eigen::Vector2d c, xr, xe, xdb, xd, xc, s0, s1;
+		Eigen::Vector2d x0b, x1b, x2b, x0, x1, x2;
+		
+		x0 << 0.1, 0.5;
+		x1 << x0[0]+μ, x0[1]+0 ;
+		x2 << x0[0]+0, x0[1]+μ ;
+
+		Symbolic f = exp(-divisionsym(x*x + y*y,2*s*s)) - exp(-divisionsym(x*x + y*y,2*t*t)) + division(1,10)*x*x + division(1,10)*y*y;
+
+		
+		Equations rules_x0b = (x == x0b[0],
+		                		y == x0b[1]);
+		Equations rules_x1b = (x == x1b[0],
+		                		y == x1b[1]);
+		Equations rules_x2b = (x == x2b[0],
+		                		y == x2b[1]);
+		Symbolic f_x0b = evalf(f.subst_all(rules_x0b),1,1);
+		Symbolic f_x1b = evalf(f.subst_all(rules_x1b),1,1);
+		Symbolic f_x2b = evalf(f.subst_all(rules_x2b),1,1);
+		double fx0b = f_x0b;
+		double fx1b = f_x1b;
+		double fx2b = f_x2b;
+		
+		// Sort in ascending order
+		vector<double> v_fxyb = {fx0b, fx1b, fx2b};
+		sort(v_fxyb.begin(), v_fxyb.end()); 
+	
+		
+		if(v_fxyb[0] == fx0b) // sorting x0, x1, x2
+		{
+			x0 = x0b;
+			if (v_fxyb[1] == fx1b)
+			{
+				x1 = x1b;
+				x2 = x2b;
+			}
+			else if (v_fxyb[1] == fx2b)
+			{
+				xdb = x1b;
+				x1 = x2b;
+				x2 = xdb;
+			}
+		}
+		else if(v_fxyb[0] == fx1b)
+		{
+			xdb = x0b;
+			x0 = x1b;
+			if (v_fxyb[1] == fx0b)
+			{
+				x1 = xdb;
+				x2 = x2b;
+			}
+			else if (v_fxyb[1] == fx2b)
+			{
+				x1 = x2b;
+				x2 = xdb;
+			}			
+		}
+		else if(v_fxyb[0] == fx2b)
+		{
+			xdb = x0b;
+			x0 = x2b;
+			if (v_fxyb[1] == fx0b)
+			{
+				x2 = x1b;
+				x1 = xdb;
+			}
+			else if (v_fxyb[1] == fx1b)
+			{
+				x1 = x1b;
+				x2 = xdb;
+			}			
+		}
+		// end of sorting in ascending order
+		
+
+		static float α = 1, β = 0.5, γ = 2, δ = 0.5;
+		
+		// Start the downhill simplex computation
 		for (int i = 1; i <= Ni; i++) 
 		{
-			c = division(1,n)*(x0+x1+x2);
+			c = division(1,n)*(x0+x1);
 			
 			xr = c+ α*(c-x2);
 
@@ -278,7 +343,7 @@ void DemoDownhillSimplexPlot() {
 			else if (fxr < fx0) // continue to explore and do expansion
 			{
 				//cout << "*** Expansion *** " << endl;
-				num_expansion += 1 ;
+				
 				xe = c + γ*(xr - c);
 				Equations rules_xe = (x == xe[0],
 		                		y == xe[1]);
@@ -290,74 +355,85 @@ void DemoDownhillSimplexPlot() {
 				{
 					//cout << "*** Greedy minimization *** " << endl;
 					x2 = xe;
+					num_expansion += 1 ;
 				}
 				else if (fxr <= fxe)
 				{
 					//cout << "*** Greedy minimization *** " << endl;
 					x2 = xr;
+					num_reflection += 1 ; 
 				}
 				// end of Greedy minimization
 			}
-			else if (fxr >= fx1 ) // Do contraction
+			else if (fxr >= fx1 && fxr <fx2 ) // Do outside contraction
 			{
-				if (fxr < fx0) // Outside contraction
+				
+				xc = c + β*(xr-c);
+				Equations rules_xc = (x == xc[0],
+		               		y == xc[1]);
+				f_xc = evalf(f.subst_all(rules_xc),1,1);
+				fxc = f_xc;
+				if (fxc <= fxr)
 				{
-					xc = c + β*(xr-c);
-					Equations rules_xc = (x == xc[0],
-		                		y == xc[1]);
-					f_xc = evalf(f.subst_all(rules_xc),1,1);
-					fxc = f_xc;
-					if (fxc <= fxr)
-					{
-						//cout << "*** Outside Contraction *** " << endl;
-						x2 = xc; 
-						num_outsidecontraction += 1 ;
-					}
-					else if (fxc > fx0)//  Peform shrink operation
-					{
-						//cout << "*** Shrink from outside contraction *** " << endl;
-						
-						s0 = x0 + δ*(x1-x0);
-						s1 = x0 + δ*(x2-x0);	
-
-						x1 = s0;
-						x2 = s1;
-						num_shrink += 1;
-					}
+					//cout << "*** Outside Contraction *** " << endl;
+					x2 = xc; 
+					num_outsidecontraction += 1 ;
 				}
-				else if (fxr >= fx0) // Inside contraction
+				else if (fxc > fxr)//  Peform shrink operation
 				{
-					xc = c + β*(x0-c);
-					Equations rules_xc = (x == xc[0],
-		                		y == xc[1]);
-					f_xc = evalf(f.subst_all(rules_xc),1,1);
-					fxc = f_xc;
+					//cout << "*** Shrink from outside contraction *** " << endl;
+						
+					s0 = x0 + δ*(x1-x0);
+					s1 = x0 + δ*(x2-x0);	
 
-					if (fxc <= fx0)
-					{
-						//cout << "*** Inside contraction *** " << endl;
-						x2 =xc;
-						num_insidecontraction += 1;
-					}
-					else if (fxc > fx0) //  Peform shrink operation
-					{
-						//cout << "*** Shrink from inside contraction *** " << endl;
-						
-						s0 = x0 + δ*(x1-x0);
-						s1 = x0 + δ*(x2-x0);	
-						
-						x1 = s0;
-						x2 = s1;
-						num_shrink += 1;
-					}
+					x1 = s0;
+					x2 = s1;
+					num_shrink += 1;
+					
 				}
-			} // end of contraction
+			}
+			else if (fxr >= fx2) // Do Inside contraction
+			{
+				xc = c + β*(x2-c);
+				Equations rules_xc = (x == xc[0],
+		               		y == xc[1]);
+				f_xc = evalf(f.subst_all(rules_xc),1,1);
+				fxc = f_xc;
+
+				if (fxc <= fxr)
+				{
+					//cout << "*** Inside contraction *** " << endl;
+					x2 =xc;
+					num_insidecontraction += 1;
+				}
+				else if (fxc > fxr) //  Peform shrink operation
+				{
+					//cout << "*** Shrink from inside contraction *** " << endl;
+						
+					s0 = x0 + δ*(x1-x0);
+					s1 = x0 + δ*(x2-x0);	
+						
+					x1 = s0;
+					x2 = s1;
+					num_shrink += 1;
+				}
+				
+			} // end of downhill simplex
+		
+			f_x0 = evalf(f.subst_all(rules_x0),1,1);
+			f_x1 = evalf(f.subst_all(rules_x1),1,1);
+			f_x2 = evalf(f.subst_all(rules_x2),1,1);
 			
-			
+			fx0 = f_x0;
+			fx1 = f_x1;
+			fx2 = f_x2;
+
 			// Sort in ascending order
 			vector<double> v_fxy = {fx0, fx1, fx2};
 			sort(v_fxy.begin(), v_fxy.end()); 
-			
+			// Sort in descending order using a custom comparator
+			// sort(numbers.begin(), numbers.end(), greater<double>());
+
 			if(v_fxy[0] == fx0) // sorting x0, x1, x2
 			{
 				x0 = x0;
@@ -403,8 +479,16 @@ void DemoDownhillSimplexPlot() {
 					x2 = xd;
 				}			
 			}
+			f_x0_final = evalf(f.subst_all(rules_x0),1,1);
+			f_x1_final = evalf(f.subst_all(rules_x1),1,1);
+			f_x2_final = evalf(f.subst_all(rules_x2),1,1);
+			
+			fx0_final = f_x0_final;
+			fx1_final = f_x1_final;
+			fx2_final = f_x2_final;
+			
 		}	// end of for looping
-		// end of Code for computation with Armadillo + SymIntegration
+		// end of Code for computation with Eigen + SymIntegration
 
 		// Choose fill color
 		ImGui::Text("Fill color");
@@ -463,9 +547,9 @@ void DemoDownhillSimplexPlot() {
 		ImGui::Text("Outside contraction = %.0d ", num_outsidecontraction);
 		ImGui::Text("Inside contraction = %.0d ", num_insidecontraction);
 		ImGui::Text("Shrink = %.0d ", num_shrink);
-		ImGui::Text("f(x_{0}) = %.5f ", fx0);
-		ImGui::Text("f(x_{1}) = %.5f ", fx1);
-		ImGui::Text("f(x_{2}) = %.5f ", fx2);
+		ImGui::Text("f(x_{0}) = %.5f ", fx0_final);
+		ImGui::Text("f(x_{1}) = %.5f ", fx1_final);
+		ImGui::Text("f(x_{2}) = %.5f ", fx2_final);
 		
 		// Begin the plot
 		if (selected_fill == 1)
@@ -477,6 +561,7 @@ void DemoDownhillSimplexPlot() {
 		// Set styles
 		ImPlot3D::SetupAxesLimits(-2, 2, -2, 2, -1.5, 1.5);
 		ImPlot3D::PushStyleVar(ImPlot3DStyleVar_FillAlpha, 0.8f);
+		
 		if (selected_fill == 0)
 		{
 		ImPlot3D::SetNextFillStyle(solid_color);	
@@ -484,7 +569,7 @@ void DemoDownhillSimplexPlot() {
 
 		// Plot the surface
 		ImPlot3D::PlotSurface("f(x,y) = exp(-(x^2+y^2)/(2s^2)) - exp(-(x^2+y^2)/(2t^2)) + (x^2)/10 + (y^2)/10", xs, ys, zs, N, N);
-
+		
 		// End the plot
 		ImPlot3D::PopStyleVar();
 		ImPlot3D::EndPlot();
@@ -497,6 +582,168 @@ void DemoDownhillSimplexPlot() {
 }
 
 //-----------------------------------------------------------------------------
+
+void DemoGradientDescentPlot() {
+    		
+		constexpr int N = 100;
+		static float xs[N * N], ys[N * N], zs[N * N];
+		
+		// Define the range for X and Y
+		constexpr float min_val = -3.0f;
+		constexpr float max_val = 3.0f;
+		constexpr float step = (max_val - min_val) / (N - 1);
+		static float a = 0.5;
+		static float b = 1;
+		static float c = 2;
+		static float d = 1;
+		static float e = 3;
+		
+		// Populate the xs, ys, and zs arrays
+		for (int i = 0; i < N; i++) 
+		{
+			for (int j = 0; j < N; j++) 
+			{
+				int idx = i * N + j;
+				xs[idx] = min_val + j * step;                                             // X values are constant along rows
+				ys[idx] = min_val + i * step;                                             // Y values are constant along columns
+				zs[idx] =  a*(xs[idx]*xs[idx]) + b*(ys[idx]*ys[idx]) + c*xs[idx] +d*ys[idx] + e; // z = ax^2 + by^2 +cx+ dy + e
+			}
+		}
+
+		// Code for computation with SymIntegration starts here
+		double x_new, y_new;
+		Symbolic x("x"), y("y"), z("z"), f, f_new, f_old;
+		// Assign the static float into Symbolic to get rid of warning of worst conversion from ISO C++: 
+		// operator+(double,float) and operator+(Symbolic&, const double&)
+		Symbolic a1 = a, b1 = b, c1 = c, d1 = d, e1 = e; 
+		f = (a1*x*x) + c1*x + b1*y*y + d1*y + e1;
+		double fnew;
+		double x_old = -5;	
+		double y_old =  21;
+
+		int Ni = 50;
+		static float γ = 0.1;
+		for(int i = 1 ; i <= Ni  ; i = i+1)
+		{
+			double fxnew = df(f,x)[x==x_old];
+			double fynew = df(f,y)[y==y_old];
+			//double fxnew = grad(f,x,y)(0)[x==x_old];
+			//double fynew = grad(f,x,y)(1)[y==y_old];
+
+			x_new = x_old - γ*fxnew;
+			y_new = y_old - γ*fynew;
+
+			f_new = f[x==x_new,y==y_new] ;
+			f_old = f[x==x_old,y==y_old]; 
+			fnew = f_new; // turns Symbolic into Double type
+
+			double err = f_new-f_old;
+			if (abs(err) < pow(10,-5))
+			{
+				//cout << "The gradient descent converges." << endl;		
+				break;
+			}
+
+			if (i==N)
+			{
+				//cout << "Maximum number of iteration reached." << endl;			
+				break;
+			}
+
+			x_old = x_new;
+			y_old = y_new;
+
+		}			
+		// end of Code for computation with SymIntegration
+
+		// Choose fill color
+		ImGui::Text("Fill color");
+		static int selected_fill = 1; // Colormap by default
+		static ImVec4 solid_color = ImVec4(0.8f, 0.8f, 0.2f, 0.6f);
+		const char* colormaps[] = {"Viridis", "Plasma", "Hot", "Cool", "Pink", "Jet", "Twilight", "RdBu", "BrBG", "PiYG", "Spectral", "Greys"};
+		static int sel_colormap = 10; // Spectral by default
+		{
+			ImGui::Indent();
+
+		// Choose solid color
+		ImGui::RadioButton("Solid", &selected_fill, 0);
+		if (selected_fill == 0) 
+		{
+			ImGui::SameLine();
+			ImGui::ColorEdit4("##SurfaceSolidColor", (float*)&solid_color);
+		}
+
+		// Choose colormap
+		ImGui::RadioButton("Colormap", &selected_fill, 1);
+		if (selected_fill == 1) 
+		{
+			ImGui::SameLine();
+			ImGui::Combo("##SurfaceColormap", &sel_colormap, colormaps, IM_ARRAYSIZE(colormaps));
+			}
+			ImGui::Unindent();
+		}
+		static bool range = false;
+		ImGui::Checkbox("Change parameters", &range);
+		if (range) {
+			ImGui::SetNextItemWidth(200);
+			ImGui::BulletText("a");
+			ImGui::DragFloat("##a", &a, 0.1f, 10.0f);
+			ImGui::SetNextItemWidth(200);
+			ImGui::BulletText("b");
+			ImGui::DragFloat("##b", &b, 0.1f, 10.0f);
+			ImGui::SetNextItemWidth(200);
+			ImGui::BulletText("c");
+			ImGui::DragFloat("##c", &c, 0.1f, 10.0f);
+			ImGui::SetNextItemWidth(200);
+			ImGui::BulletText("d");
+			ImGui::DragFloat("##d", &d, 0.1f, 10.0f);
+			ImGui::SetNextItemWidth(200);
+			ImGui::BulletText("e");
+			ImGui::DragFloat("##e", &e, 0.1f, 10.0f);
+			ImGui::SetNextItemWidth(200);
+			//ImGui::BulletText("gamma");
+			//ImGui::DragFloat("##gamma", &γ, 0.1f, 0.9f);
+			//ImGui::SetNextItemWidth(200);
+			
+			
+		}
+		ImGui::Text("Number of iteration = %.0d ", Ni);
+		ImGui::Text("x_new = %.5f ", x_new);
+		ImGui::Text("y_new = %.5f ", y_new);
+		ImGui::Text("f(x_new,y_new) = %.5f ", fnew);
+		
+		// Begin the plot
+		if (selected_fill == 1)
+		{
+		ImPlot3D::PushColormap(colormaps[sel_colormap]);
+		}
+		if (ImPlot3D::BeginPlot("Surface Plot", ImVec2(-1, 400), ImPlot3DFlags_NoClip)) 
+		{
+		// Set styles
+		ImPlot3D::SetupAxesLimits(-3, 3, -3, 8, -2, 18.5);
+		ImPlot3D::PushStyleVar(ImPlot3DStyleVar_FillAlpha, 0.8f);
+		
+		if (selected_fill == 0)
+		{
+		ImPlot3D::SetNextFillStyle(solid_color);	
+		ImPlot3D::SetNextLineStyle(ImPlot3D::GetColormapColor(1));}
+
+		// Plot the surface
+		ImPlot3D::PlotSurface("f(x,y) = a(x^2) + b(y^2) + cx + dy + e", xs, ys, zs, N, N);
+		
+		// End the plot
+		ImPlot3D::PopStyleVar();
+		ImPlot3D::EndPlot();
+		}
+		if (selected_fill == 1)
+		{
+		ImPlot3D::PopColormap();
+		}
+
+}
+
+//-----------------------------------------------------------------------------
+
 
 
 //-----------------------------------------------------------------------------
@@ -629,6 +876,7 @@ void ShowAllDemos() {
     if (ImGui::BeginTabBar("Minimization")) {
         if (ImGui::BeginTabItem("Plots")) {
             DemoHeader("Downhill Simplex Plot", DemoDownhillSimplexPlot);
+            DemoHeader("Gradient Descent Plot", DemoGradientDescentPlot);
             DemoHeader("Surface Plots", DemoSurfacePlots);
             ImGui::EndTabItem();
         }
