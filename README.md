@@ -15,8 +15,8 @@ Interactive plotting library for Mathematics learning.
 |:sunflower:   | Root Finding: Bisection and Newton' Method    				| Done
 |:sunflower:   | First order differential equation: Euler' method      			| Done
 |:sunflower:   | Minimization with Downhill Simplex method				| Done
-|:writing_hand:| Minimization with gradient descent and Newton' Method			| Gradient Descent Done, NR not yet
-|:writing_hand:| Approximation with Lagrange interpolation, cubic-spline, Fourier series| Not yet
+|:sunflower:   | Minimization with gradient descent and Newton' Method			| Done
+|:writing_hand:| Approximation with Lagrange interpolation, cubic-spline, Fourier series| Lagrange done
 |:writing_hand:| Numerical integration with Simpson's rule, Romberg integration		| Not yet
 |:writing_hand:| Boundary value problems						| Not yet
 |:writing_hand:| PDE: Heat equation							| Not yet

@@ -1254,6 +1254,9 @@ IMPLOT_API void ShowDemoWindow(bool* p_open = nullptr);
 // Shows the first order differential equations demo window (add hamzstlab_firstorderdifferentialequations.cpp to your sources!)
 IMPLOT_API void ShowFirstOrderDEWindow(bool* p_open = nullptr);
 
+// Shows the root finding demo window (add hamzstlab_interpolation.cpp to your sources!)
+IMPLOT_API void ShowInterpolationWindow(bool* p_open = nullptr);
+
 // Shows the root finding demo window (add hamzstlab_rootfinding.cpp to your sources!)
 IMPLOT_API void ShowRootFindingWindow(bool* p_open = nullptr);
 
