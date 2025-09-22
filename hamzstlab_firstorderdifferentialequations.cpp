@@ -1217,7 +1217,7 @@ void ShowFirstOrderDEWindow(bool* p_open) {
             DemoHeader("Logistic Growth", Demo_LogisticGrowth);
             DemoHeader("Direction Fields", Demo_DirectionFields);
             DemoHeader("Direction Fields 2", Demo_DirectionFields2);
-            DemoHeader("Euler Method's", Demo_LinePlots);
+            DemoHeader("Euler's Method", Demo_LinePlots);
             ImGui::EndTabItem();
         }
         if (ImGui::BeginTabItem("Custom")) {

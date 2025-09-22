@@ -194,10 +194,10 @@ struct HugeTimeData {
 
 void Demo_Help() {
     ImGui::Text("ABOUT THIS DEMO:");
-    ImGui::BulletText("We are demonstrating the interpolation method");
+    ImGui::BulletText("We are demonstrating the statistics and probability problems");
     ImGui::Separator();
     ImGui::Text("PROGRAMMER GUIDE:");
-    ImGui::BulletText("See the ShowInterpolationWindow() code in modules/hamzstlab_interpolation.cpp. <- you are here!");
+    ImGui::BulletText("See the ShowStatisticsWindow() code in modules/hamzstlab_statistics.cpp. <- you are here!");
     ImGui::BulletText("If you see visual artifacts, do one of the following:");
     ImGui::Indent();
     ImGui::BulletText("Handle ImGuiBackendFlags_RendererHasVtxOffset for 16-bit indices in your backend.");
@@ -294,82 +294,58 @@ double division(double x, double y)
 {
 	return x/y;
 }
-void Demo_LagrangePolynomial() {
+void Demo_RegressionLine() {
+
 	Symbolic x("x");
-	Symbolic f = x^(Symbolic(-1));
-	mat X;
-	X.load("vectorX.txt");
-	mat F;
+	Symbolic f ;
 
-	int N = X.n_rows ;
-	F.set_size(N,1);
+	fmat A;
 	
-	for (int i = 0; i<N; i++)
-	{
-		F(i) = f[x==X(i)];
-	}
+	A.load("MatrixA.txt");	
+	cout << "Matrix A:" << endl;
+	A.print();
+	int N = A.n_rows ;
+	cout << "\nN = " << N << endl;
 	
-	Matrix<Symbolic> L(N,1);
-	L[0][0] = 1;	
-	L[1][0] = 1;
-	L[2][0] = 1;
-	for (int i = 0; i<N; i++)
+	// Copy matrix A from Armadillo into W Symbolic matrix for SymIntegration
+	Matrix<Symbolic> W(N,2);
+	for(int i=0; i < N; ++i)
 	{
-		for (int j = 0; j<N; j++)
-		{
-			if (i != j)
-			{
-				L[i][0] *= (x-X(j))/(X(i)-X(j));
-			}			
-		}
+		W[i][0]= A.col(0)[i];
+		W[i][1]= A.col(1)[i];
 	}
-	
-	Symbolic P ;
-	for (int i = 0; i<N; i++)
-	{
-		P += F(i)*L[i][0];
-	}
-	static float x0 = 3;
-	double a0 = P.coeff(x,2);
-	double a1 = P.coeff(x,1);
-	double a2 = P.coeff(x,0);
+	cout << "\nRegression line, y = " << regressionline(W,N) << endl;
+	f = regressionline(W,N);
 
-	double Px0 = a0*x0*x0+a1*x0 +a2;
-	double fx0 = division(1,x0);
-	static float xs1[1001], ys1[1001], ys2[1001];
+	static float xs1[1001], ys1[1001];
+	double a = f.coeff(x,1);
+	double b = f.coeff(x,0);
 	for (int i = 0; i < 1001; ++i) {
 		xs1[i] = i * 0.01f;
-		//double Pd = P[x==xs1[i]]; // a nice trick to convert Symbolic to double and float
-		ys1[i] =  a0*xs1[i]*xs1[i]+a1*xs1[i] +a2; // the Lagrange interpolating polynomial
-		ys2[i] = 1/(xs1[i]); // the function that will be approximated
+		ys1[i] =  a*xs1[i] + b; 
 	}
-	
-	static ImVec4 color1 = ImVec4(0.133,0.545,0.133,1); // Forest green
+	static double xs2[5], ys2[5];
+	for (int i = 0; i <= N; ++i) 
+	{    
+		xs2[i] = A.col(0)[i];
+		ys2[i] = A.col(1)[i];	
+	}
+	//static ImVec4 color1 = ImVec4(0.133,0.545,0.133,1); // Forest green
 	static ImVec4 color2 = ImVec4(0,0.808,0.82,1); // Dark turquoise
 	//static ImVec4 color3 = ImVec4(0.855,0.647,0.125,1); // Goldenrod
 	static float  thickness = 1;
-    	static bool range = false;
-
-	ImGui::Checkbox("Compare the approximation", &range);
+	double r = rpearson(W,N);
     	
-	if (range) {
-	ImGui::SameLine();
-	ImGui::SetNextItemWidth(200);
-	ImGui::BulletText("x");
-	ImGui::DragFloat("##x0", &x0, 0.0f, 10.0f);
-	ImGui::Text("P(x) = %.5f ", Px0);
-	ImGui::Text("f(x) = %.5f ", fx0);
-	}
+	ImGui::Text("r = %.5f ", r);
 	
 
-	if (ImPlot::BeginPlot("Lagrange Polynomial Interpolation")) {
+	if (ImPlot::BeginPlot("Regression line")) {
         ImPlot::SetupAxes("x","y");
-	ImPlot::SetupAxesLimits(0, 5, 0, 7);
+	ImPlot::SetupAxesLimits(0, 12, 10, 45);
 	ImPlot::SetupLegend(ImPlotLocation_East, ImPlotLegendFlags_Outside);
         ImPlot::SetNextLineStyle(color2, thickness);
-	ImPlot::PlotLine("Interpolating polynomial P(x) ", xs1, ys1, 1001);
-	ImPlot::SetNextLineStyle(color1, thickness);
-	ImPlot::PlotLine("f(x) = 1/x", xs1, ys2, 1001);
+	ImPlot::PlotLine("Line of best fit", xs1, ys1, 1001);
+	ImPlot::PlotScatter("Data", xs2, ys2, N);
   	ImPlot::EndPlot();
     }
 }
@@ -513,7 +489,7 @@ void DemoHeader(const char* label, void(*demo)()) {
     }
 }
 
-void ShowInterpolationWindow(bool* p_open) {
+void ShowStatisticsWindow(bool* p_open) {
     static bool show_implot_metrics      = false;
     static bool show_implot_style_editor = false;
     static bool show_imgui_metrics       = false;
@@ -542,7 +518,7 @@ void ShowInterpolationWindow(bool* p_open) {
     }
     ImGui::SetNextWindowPos(ImVec2(50, 50), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowSize(ImVec2(600, 750), ImGuiCond_FirstUseEver);
-    ImGui::Begin("Interpolation and Polynomial Approximation", p_open, ImGuiWindowFlags_MenuBar);
+    ImGui::Begin("Statistics and Probability", p_open, ImGuiWindowFlags_MenuBar);
     if (ImGui::BeginMenuBar()) {
         if (ImGui::BeginMenu("Tools")) {
             ImGui::MenuItem("Metrics",      nullptr, &show_implot_metrics);
@@ -569,7 +545,7 @@ void ShowInterpolationWindow(bool* p_open) {
 
     if (ImGui::BeginTabBar("ImPlotDemoTabs")) {
         if (ImGui::BeginTabItem("Plots")) {
-	    DemoHeader("Lagrange Interpolating Polynomial", Demo_LagrangePolynomial);
+	    DemoHeader("Regression Line", Demo_RegressionLine);
             ImGui::EndTabItem();
         }
         if (ImGui::BeginTabItem("Custom")) {
@@ -773,7 +749,7 @@ void PlotCandlestick(const char* label_id, const double* xs, const double* opens
 
 #else
 
-void ImPlot::ShowInterpolationWindow(bool* p_open) {}
+void ImPlot::ShowStatisticsWindow(bool* p_open) {}
 
 #endif
 
