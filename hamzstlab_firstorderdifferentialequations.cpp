@@ -947,6 +947,52 @@ void Demo_BaseballinFlight() {
 
 //-----------------------------------------------------------------------------
 
+void Demo_NonlinearDifferenceEquations() {
+	static float u0 = 0.2, rho = 0.8;
+	static double xt[1000], yt[1000];
+	double un = divisiond(rho-1,rho);
+
+	for (int i = 1; i <= 1000; ++i) 
+	{ 
+		xt[i] = i;
+		yt[i] = rho*yt[i-1]*(1-yt[i-1]) ;
+	}
+	xt[0] = 0;
+	yt[0] = rho*u0*(1-u0) ;
+	
+	
+	static ImVec4 color1 = ImVec4(0.133,0.545,0.133,1); // Forest green
+	static float  thickness = 1;
+    	static bool range = true;
+
+	ImGui::Checkbox("Change parameters ", &range);
+
+	if (range) {
+	ImGui::SetNextItemWidth(200);
+	ImGui::BulletText("Initial condition (u_{0})");
+	ImGui::DragFloat("##Initial condition (u_{0})", &u0, 0.01f, 1.0f);
+	ImGui::SetNextItemWidth(200);
+	ImGui::BulletText("Parameter (p)");
+	ImGui::DragFloat("##Parameter (p)", &rho, 0.01f, 10.0f);
+	ImGui::SetNextItemWidth(200);
+	
+	ImGui::Text("Equilibrium solution u_{n} = %.5f ", un);
+	}
+
+	if (ImPlot::BeginPlot("Logistic Difference Equation")) {
+	ImPlot::SetupAxes("n","u_{n}");
+	ImPlot::SetupAxesLimits(0, 10, 0, 1);
+	ImPlot::SetupLegend(ImPlotLocation_East, ImPlotLegendFlags_Outside);
+        
+       	ImPlot::SetNextLineStyle(color1, thickness);
+	ImPlot::PlotLine("u_{n+1} = p u_{n} (1 - u_{n})", xt, yt, 1000);			
+        
+	ImPlot::EndPlot();
+    }
+}
+
+//-----------------------------------------------------------------------------
+
 void Demo_LogisticGrowth() {
 	static float xs1[1001], ys1[1001],ys2[1001],ys3[1001],ys4[1001],ys5[1001];
 	static int y01 = 1, y02 = 2, y03 = 3, y04 = 6, y05 = 7;
@@ -1215,6 +1261,7 @@ void ShowFirstOrderDEWindow(bool* p_open) {
             DemoHeader("Sky Diver", Demo_SkyDiver);	
             DemoHeader("Baseball in Flight", Demo_BaseballinFlight);	
             DemoHeader("Logistic Growth", Demo_LogisticGrowth);
+            DemoHeader("Nonlinear Difference Equation", Demo_NonlinearDifferenceEquations);
             DemoHeader("Direction Fields", Demo_DirectionFields);
             DemoHeader("Direction Fields 2", Demo_DirectionFields2);
             DemoHeader("Euler's Method", Demo_LinePlots);
