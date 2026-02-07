@@ -192,10 +192,10 @@ struct HugeTimeData {
 
 void Demo_Help() {
     ImGui::Text("ABOUT THIS DEMO:");
-    ImGui::BulletText("We are demonstrating the solution of first order differential equations");
+    ImGui::BulletText("We are demonstrating the solution of second order differential equations");
     ImGui::Separator();
     ImGui::Text("PROGRAMMER GUIDE:");
-    ImGui::BulletText("See the ShowFirstOrderDEWindow() code in hamzstlab-firstorderdifferentialequations.cpp. <- you are here!");
+    ImGui::BulletText("See the ShowSecondOrderDEWindow() code in hamzstlab-secondorderdifferentialequations.cpp. <- you are here!");
     ImGui::BulletText("If you see visual artifacts, do one of the following:");
     ImGui::Indent();
     ImGui::BulletText("Handle ImGuiBackendFlags_RendererHasVtxOffset for 16-bit indices in your backend.");
@@ -288,205 +288,110 @@ void Demo_Config() {
 }
 
 //-----------------------------------------------------------------------------
-double df(double x, double y)
-{
-return 3-2*x-0.5*y;
-}
 
-void Demo_LinePlots() {
-    static float xs1[1001], ys1[1001];
-    for (int i = 0; i < 1001; ++i) {
-        xs1[i] = i * 0.001f;
-        ys1[i] = 14.0f - (4.0f * (xs1[i]) ) - 13.0f*(exp(-0.5f*xs1[i]));
-    }
-   float x0 = 0;
-   float y0 = 1;
-   float h = 0.2;
-   float x = 1;
-   float c;
-   int n = x / 0.2;
-   
-   static double xs2[6], ys2[6];
-   xs2[0] = x0;
-   ys2[0] = y0;
-   for (int i = 1; i <= n+1; ++i) 
-   {    
-        c = ys2[i-1];
-	xs2[i] = xs2[i-1] + h;
-	ys2[i] = c + df(xs2[i-1],ys2[i-1])*h;	
-   }
-    if (ImPlot::BeginPlot("Initial value Problem with dy/dt = 3 - 2t - 0.5y and y(0)=1")) {
-        ImPlot::SetupAxes("t","y");
-	ImPlot::SetupLegend(ImPlotLocation_East, ImPlotLegendFlags_Outside);
-        
-        ImPlot::PlotLine("y(t) = 14 - 4t - 13exp(-t/2)", xs1, ys1, 1001);
-        ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle);
-        ImPlot::PlotScatter("Euler's Approximation", xs2, ys2, n+1);
-	ImPlot::EndPlot();
-    }
-}
+void Demo_HomogeneousLinearEquation() {
+	static float xs1[10001], ys1[10001];
 
-//-----------------------------------------------------------------------------
-void Demo_DirectionFields() {
-	// y' = 3 - 2t - 0.5y
-	static double xs[50], ys[50], xs2[50], ys2[50], xs3[50], ys3[50], xs4[50], ys4[50], xs5[50], ys5[50], xs6[50], ys6[50];
-
-	xs[0] = 0;
-	ys[0] = 0;
-	double m = 3 - 2*(xs[0]) - 0.5*(ys[0]);
-	for (int i = 1; i < 50; ++i) 
+	static float a = 1;
+	static float b = -1;
+	static float c = 0.25;
+	static float y0 = 2;
+	static float dy0 = divisiond(2,1);
+	double t0 = 0;
+	double D = (b*b) - (4*a*c);
+	double r1, r2, c1, c2, lambda, D_real;
+	// We multiply i with 0.1 -> xs1[i] = i*0.1; and ys1[i] will have i*0.1 as a replacement for i only, so the graph will be smooth
+	if (D == 0)
 	{
-		xs[i] = (i * 1/19.0f) ;
-		ys[i] = ys[i-1] + m*(xs[i] - xs[i-1]);
-		m = 3 - 2*xs[i] - 0.5*ys[i]; // y' = 3 - 2t - 0.5y
-	}
-	xs2[0] = 0;
-	ys2[0] = 0.82;
-	m = 3 - 2*(xs2[0]) - 0.5*(ys2[0]);
-	for (int i = 1; i < 50; ++i) 
-	{
-		xs2[i] = (i * 1/19.0f) ;
-		ys2[i] = ys2[i-1] + m*(xs2[i] - xs2[i-1]);
-		m = 3 - 2*xs2[i] - 0.5*ys2[i]; // y' = 3 - 2t - 0.5y
-	}
-	xs3[0] = 0;
-	ys3[0] = -0.82;
-	m = 3 - 2*(xs3[0]) - 0.5*(ys3[0]);
-	for (int i = 1; i < 50; ++i) 
-	{
-		xs3[i] = (i * 1/19.0f) ;
-		ys3[i] = ys3[i-1] + m*(xs3[i] - xs3[i-1]);
-		m = 3 - 2*xs3[i] - 0.5*ys3[i]; // y' = 3 - 2t - 0.5y
-	}
-	xs4[0] = 0;
-	ys4[0] = -1.42;
-	m = 3 - 2*(xs4[0]) - 0.5*(ys4[0]);
-	for (int i = 1; i < 50; ++i) 
-	{
-		xs4[i] = (i * 1/19.0f) ;
-		ys4[i] = ys4[i-1] + m*(xs4[i] - xs4[i-1]);
-		m = 3 - 2*xs4[i] - 0.5*ys4[i]; // y' = 3 - 2t - 0.5y
-	}
-	xs5[0] = 0;
-	ys5[0] = -1.8;
-	m = 3 - 2*(xs5[0]) - 0.5*(ys5[0]);
-	for (int i = 1; i < 50; ++i) 
-	{
-		xs5[i] = (i * 1/19.0f) ;
-		ys5[i] = ys5[i-1] + m*(xs5[i] - xs5[i-1]);
-		m = 3 - 2*xs5[i] - 0.5*ys5[i]; // y' = 3 - 2t - 0.5y
-	}
-	xs6[0] = 0;
-	ys6[0] = -2.1;
-	m = 3 - 2*(xs6[0]) - 0.5*(ys6[0]);
-	for (int i = 1; i < 50; ++i) 
-	{
-		xs6[i] = (i * 1/19.0f) ;
-		ys6[i] = ys6[i-1] + m*(xs6[i] - xs6[i-1]);
-		m = 3 - 2*xs6[i] - 0.5*ys6[i]; // y' = 3 - 2t - 0.5y
-	}
-	if (ImPlot::BeginPlot("Direction Fields")) 
-	{
-	ImPlot::SetupAxes("x","y");
-	ImPlot::SetupAxesLimits(0,2,0,2.3);
-	//ImPlot::SetNextMarkerStyle(ImPlotMarker_Right, 4, ImPlot::GetColormapColor(2), IMPLOT_AUTO, ImPlot::GetColormapColor(2));
-	ImPlot::PlotLine("", xs, ys, 50,ImPlotLineFlags_Segments);
-	//ImPlot::PushStyleColor(ImPlotCol_Line, ImVec4(0.6f,0.6f,0.3f,0.8f));
-        
-	ImPlot::PlotLine("", xs2, ys2, 50,ImPlotLineFlags_Segments);
-	ImPlot::PlotLine("", xs3, ys3, 50,ImPlotLineFlags_Segments);
-	ImPlot::PlotLine("", xs4, ys4, 50,ImPlotLineFlags_Segments);
-	ImPlot::PlotLine("", xs5, ys5, 50,ImPlotLineFlags_Segments);
-	ImPlot::PlotLine("", xs6, ys6, 50,ImPlotLineFlags_Segments);
-	ImPlot::EndPlot();
-	}
-}
-
-//-----------------------------------------------------------------------------
-double f(double x, double y) {
-	return 3 - 2*x - 0.5*y ;// Example : y' = 3 - 2t - 0.5y
-	//return -x / y; // Example: dy/dx = -x/y
-}
-void Demo_DirectionFields2() {
-	// y' = 3 - 2t - 0.5y
-	// Define your differential equation
-
-	static double xs[500], ys[500];
-	int i = 1;
-	double x_min = -3.0, x_max = 3.0;
-	double y_min = -3.0, y_max = 3.0;
-	double step_size = 0.5;
-	double dx, dy, magnitude;
-	xs[0] = x_min;
-	ys[0] = y_min;
-	for (double y = y_min; y <= y_max; y += step_size) {
-	for (double x = x_min; x <= x_max; x += step_size) {
-		if (std::abs(y) > 0.001) { // Avoid division by zero for this example
-		double slope = f(x, y);
-		// Calculate components of a unit vector in the direction of the slope
-		dx = 1.0;
-		dy = slope;
-		magnitude = sqrt(dx * dx + dy * dy);
-		dx = dx / magnitude;
-		dy = dy / magnitude;
-
+		for (int i = 0; i < 10001; ++i) {
+			xs1[i] = i*0.1;
+			r1 = divisiond(-b,2*a );
+			r2 = divisiond(-b,2*a );
+				
+			c1 = y0;
+			c2 = dy0 - (r1*c1);
+			ys1[i] = (c1) * exp(r1*i*0.1) + (c2)*(i*0.1)*(exp(r2*i*0.1)) ;
 		}
-		xs[i] = x;
-		ys[i] = y;
-		i = i+1;
-		xs[i] = x+dx;
-		ys[i] = y+dy;
-		i = i+1;
-        }
-	
 	}
-
-	if (ImPlot::BeginPlot("Direction Fields 2")) 
+	if (D > 0)
 	{
-	ImPlot::SetupAxes("x","y");
-	ImPlot::SetupAxesLimits(-3,3,-3,3);
-	//ImPlot::SetNextMarkerStyle(ImPlotMarker_Right, 4, ImPlot::GetColormapColor(2), IMPLOT_AUTO, ImPlot::GetColormapColor(2));
-	ImPlot::PlotLine(" ", xs, ys, 500,ImPlotLineFlags_Segments);
-	//ImPlot::PushStyleColor(ImPlotCol_Line, ImVec4(0.6f,0.6f,0.3f,0.8f));
-	ImPlot::EndPlot();
+		for (int i = 0; i < 10001; ++i) {
+			xs1[i] = i*0.1;
+			r1 = divisiond(-b + sqrt(D),2*a );
+			r2 = divisiond(-b - sqrt(D),2*a );
+				
+			c1 = divisiond(dy0-(r2*y0),r1-r2)*exp(-r1*t0);
+			c2 = divisiond((y0*r1)-dy0,r1-r2)*exp(-r2*t0);
+			ys1[i] = (c1) * exp(r1*i*0.1) + (c2)*(exp(r2*i*0.1)) ;
+		}
 	}
-}
-
-
-//-----------------------------------------------------------------------------
-
-void Demo_CompoundInterest() {
-	static float xs1[1001], ys1[1001];
-	static int S0 = 0;
-	static float r = 0.08;
-	static int k = 2000;
-	for (int i = 0; i < 1001; ++i) {
-	xs1[i] = i;
-	ys1[i] = S0 * exp(r*i) + (k/r)*(exp(r*i) - 1) ;
+	if (D < 0)
+	{
+		for (int i = 0; i < 10001; ++i) 
+		{
+			xs1[i] = i*0.1;
+			complex<double> Dc(D,0);
+			complex<double> D_sqrt = sqrt(Dc);
+			D_real = divisiond(imag(D_sqrt),2*a); 
+			c1 = y0;
+			lambda = -divisiond(b,2*a);
+			c2 = divisiond(dy0 - (lambda*c1),D_real);
+			ys1[i] = exp(lambda*i*0.1) * ( c1*(cosf(D_real*i*0.1)) + c2*(sinf(D_real*i*0.1)) );
+		}
 	}
 
 	static bool range = false;
 	ImGui::Checkbox("Change parameters", &range);
-    
+    	
 	if (range) {
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(200);
-	ImGui::BulletText("Initial Deposit");
-	ImGui::SliderInt("##Initial Deposit", &S0, 0, 10000);
+	ImGui::BulletText("a");
+	ImGui::SliderFloat("##a", &a, -100, 100);
 	ImGui::SetNextItemWidth(200);
-	ImGui::BulletText("Annual Deposit");
-	ImGui::SliderInt("##Annual Deposit", &k, 1, 10000);
+	ImGui::BulletText("b");
+	ImGui::SliderFloat("##b", &b, -100.01f, 100.01f);
 	ImGui::SetNextItemWidth(200);
-	ImGui::BulletText("Return Rate");
-	ImGui::DragFloat("##Return rate", &r, 0.01f, 0.2f);
+	ImGui::BulletText("c");
+	ImGui::SliderFloat("##c", &c, -100.01f, 100.01f);
 	ImGui::SetNextItemWidth(200);
+	ImGui::BulletText("y(0)");
+	ImGui::SliderFloat("##y(0)", &y0, -100.01f, 100.01f);
+	ImGui::SetNextItemWidth(200);
+	ImGui::BulletText("y'(0)");
+	ImGui::SliderFloat("##y'(0)", &dy0, -100.01f, 100.01f);
 	}
-	if (ImPlot::BeginPlot("How Long to Make USD 1 million with Annual Deposit?")) {
-	ImPlot::SetupAxes("t","S(t)");
-	ImPlot::SetupAxesLimits(0, 60, 0, 1000000);
+	
+
+	if (ImPlot::BeginPlot("The graph of solution for the initial value problem")) {
+	ImPlot::SetupAxes("t","y(t)");
+	ImPlot::SetupAxesLimits(0, 10, -25, 30);
 	ImPlot::SetupLegend(ImPlotLocation_East, ImPlotLegendFlags_Outside);
         
-	ImPlot::PlotLine("S(t) = S_{0} exp(rt) + (k/r) (exp(rt) - 1)", xs1, ys1, 1001);
+	ImPlot::PlotLine("y(t) ", xs1, ys1, 10001);
+	//ImGui::Text("a = %.1d ", a);
+	ImGui::Text("a = %.2f ", a);
+	ImGui::Text("b = %.2f ", b);
+	ImGui::Text("c = %.2f ", c);
+	ImGui::Text("y(0) = %.2f ", y0);
+	ImGui::Text("y'(0) = %.2f ", dy0);	
+	ImGui::Text("c1 = %.2f ", c1);
+	ImGui::Text("c2 = %.2f ", c2);
+	if (D == 0)
+	{
+		ImGui::Text("r1 (for same roots) = %.2f ", r1);
+		ImGui::Text("r2 (for same roots) = %.2f ", r2);
+	}
+	if (D > 0)
+	{
+		ImGui::Text("r1 (for real and different roots) = %.2f ", r1);
+		ImGui::Text("r2 (for real and different roots) = %.2f ", r2);
+	}
+	if (D < 0)
+	{
+		ImGui::Text("lambda (for complex roots) = %.2f ", lambda);
+		ImGui::Text("mu (for complex roots) = %.2f ", D_real);
+	}
 	ImPlot::EndPlot();
     }
 }
@@ -739,130 +644,6 @@ void Demo_PollutantInGreatLakes() {
 
 //-----------------------------------------------------------------------------
 
-void Demo_SkyDiver() {
-	static int t = 10, W = 180, h = 5000, b=12; 
-	static float a = 0.75, g = 9.81, cg = 3.28;
-	float m = division(W,g*cg);
-	static double xt[1000], xt2[1000], yt[1000], vt[1000], yt2[1000], vt2[1000];
-	double C1 = division(W,a);
-	double C3 = division(W,b) - division(W,a)*(1-exp(-division(a*t,m)));
-	double C4 = h + division(W*m,a*a);
-	double C6 = -division(W,a)*(t+division(m,a)*exp(-division(a*t,m))) + C4 + (C3)*division(m,b);
-
-	// Finding the time till the diver reaches the ground
-	//cout << "\n*** Newton's Method ***\n" <<endl;
-	double pn;
-	double p0 = 10;
-	int N = 20;
-	
-	//cout << setw(6) << "n" << "\t\t" << "p_{n}"   << "\n";
-	//cout << setprecision(14) << setw(6) << "0" << "\t\t" << p0  << "\n";	
-	for (int i = 1; i <=N; i++)
-	{
-		double fp = -division(W,b)*(p0-t) - division(C3*m,b)*exp(-division(b*(p0-t),m)) + C6;
-		double fpd = -division(W,b)+C3*exp(-division(b*(p0-t),m));
-		pn = p0 - (fp/fpd);
-		//cout << setprecision(14) << setw(6) << i << "\t\t" << pn << "\n";
-		double err = p0-pn;
-		if (abs(err) < pow(10,-5))
-		{
-	//		cout << "The procedure was successful." << endl;	
-	//		cout << "*****************************" << endl;			
-			break;
-		}
-		p0 = pn;
-	}
-	double t_value = p0;
-	// ********************************************End of Newton's Method ********************************************
-	// before the parachute opens
-	for (int i = 0; i <= t; ++i) {
-	xt[i] = i;
-	yt[i] = -division(W,a)*i - division(C1*m,a)*exp(-division(a*i,m)) +C4;
-	vt[i] = -division(W,a) + C1*exp(-division(a*i,m)) ;
-	}
-	
-	double h_open = yt[t];
-	//double vl = -division(W,b);
-	// after the parachute opens
-	for (int i = 0; i <= 1000; ++i) {
-	xt2[i] = i;
-	if(i<=t)
-	{
-		yt2[i] = -division(W,a)*i - division(C1*m,a)*exp(-division(a*i,m)) +C4;
-		vt2[i] = -division(W,a) + C1*exp(-division(a*i,m)) ;
-	}
-	if(i>=t)
-	{
-		yt2[i] = -division(W,b)*(i-t) - division(C3*m,b)*exp(-division(b*(i-t),m)) + C6;
-		vt2[i] = -division(W,b) + C3*exp(-division(b*(i-t),m)) ;
-	}
-	}
-	xt[0]=0;
-	yt[0]=h;
-
-	static ImVec4 color1 = ImVec4(0.133,0.545,0.133,1); // Forest green
-	static ImVec4 color2 = ImVec4(0,0.808,0.82,1); // Dark turquoise
-	//static ImVec4 color3 = ImVec4(0.855,0.647,0.125,1); // Goldenrod
-	static float  thickness = 1;
-    	static bool range = true;
-
-	ImGui::Checkbox("Change parameters (in ft, lb, s)", &range);
-
-	if (range) {
-	ImGui::SetNextItemWidth(200);
-	ImGui::BulletText("Magnitude when the parachute is closed (a) -> a|v|");
-	ImGui::DragFloat("##Magnitude when the parachute is closed (a) -> a|v|", &a, 0.1f, 1.0f);
-	ImGui::SetNextItemWidth(200);
-	ImGui::BulletText("Magnitude when the parachute is opened (b) -> b|v|");
-	ImGui::SliderInt("##Magnitude when the parachute is opened (b) -> b|v|", &b, 10, 50);
-	ImGui::SetNextItemWidth(200);
-	ImGui::BulletText("Weight of the sky diver (W)");
-	ImGui::SliderInt("##Weight", &W, 1, 1000);
-	ImGui::SetNextItemWidth(200);
-	ImGui::BulletText("Time till the parachute opens (t)");
-	ImGui::SliderInt("##Time till the parachute opens", &t, 1, 100);
-	ImGui::SetNextItemWidth(200);
-	ImGui::BulletText("Starting height (h)");
-	ImGui::SliderInt("##Starting height", &h, 1000, 10000);
-	ImGui::SetNextItemWidth(200);
-	
-	ImGui::Text("C1 = %.5f ", C1);
-	ImGui::Text("C3 = %.5f ", C3);
-	ImGui::Text("C4 = %.5f ", C4);
-	ImGui::Text("C6 = %.5f ", C6);
-	ImGui::Text("Time till the sky diver reaches the ground = %.5f ", t_value);
-	ImGui::Text("The parachute opens at height = %.2f ", h_open);
-	
-	}
-
-	if (ImPlot::BeginPlot("Sky Diver")) {
-	ImPlot::SetupAxes("t (seconds)","y(t) (feet)");
-	ImPlot::SetupAxesLimits(0, 300, 0, h);
-	ImPlot::SetupLegend(ImPlotLocation_East, ImPlotLegendFlags_Outside);
-        
-       	ImPlot::SetNextLineStyle(color2, thickness);
-	ImPlot::PlotLine("y(t)_{before}, 0 <= t <= t_{open}", xt, yt, t);		
-        ImPlot::SetNextLineStyle(color1, thickness);
-	ImPlot::PlotLine("y(t)_{after}, t_{open} <= t <= t_{arrive} ", xt2, yt2, 1000);		
-        
-	ImPlot::EndPlot();
-
-	ImPlot::BeginPlot("Sky Diver v(t)");
-	ImPlot::SetupAxes("t (seconds)","v(t) (feet)");
-	ImPlot::SetupAxesLimits(0, 300, 0, -200);
-	ImPlot::SetupLegend(ImPlotLocation_East, ImPlotLegendFlags_Outside);
-        
-       	ImPlot::SetNextLineStyle(color2, thickness);
-	ImPlot::PlotLine("v(t)_{before}, 0 <= t <= t_{open}", xt, vt, t);		
-        ImPlot::SetNextLineStyle(color1, thickness);
-	ImPlot::PlotLine("v(t)_{after}, t_{open} <= t <= t_{arrive} ", xt2, vt2, 1000);		
-        
-	
-	ImPlot::EndPlot();
-    }
-	
-	
-}
 
 //-----------------------------------------------------------------------------
 
@@ -947,114 +728,7 @@ void Demo_BaseballinFlight() {
 
 //-----------------------------------------------------------------------------
 
-void Demo_NonlinearDifferenceEquations() {
-	static float u0 = 0.2, rho = 0.8, c=0.01;
-	static double xt[1000], yt[1000], xt1[1000], yt1[1000], xt2[1000], yt2[1000];
-	double un = divisiond(rho-1,rho);
 
-	for (int i = 1; i <= 1000; ++i) 
-	{ 
-		xt[i] = i;
-		yt[i] = rho*yt[i-1]*(1-yt[i-1]) ;
-		xt1[i] = i*c;
-		yt1[i] = rho*i*(1-i*c)*c ;
-		xt2[i] = i;
-		yt2[i] = i ;
-	}
-	xt[0] = 0;
-	yt[0] = rho*u0*(1-u0) ;
-	xt1[0] = 0;
-	yt1[0] = 0 ;
-	xt2[0] = 0;
-	yt2[0] = 0 ;
-	
-	
-	static ImVec4 color1 = ImVec4(0.133,0.545,0.133,1); // Forest green
-	static ImVec4 color2 = ImVec4(0,0.808,0.82,1); // Dark turquoise
-	static float  thickness = 1;
-    	static bool range = true;
-
-	ImGui::Checkbox("Change parameters ", &range);
-
-	if (range) {
-	ImGui::SetNextItemWidth(200);
-	ImGui::BulletText("Initial condition (u_{0})");
-	ImGui::DragFloat("##Initial condition (u_{0})", &u0, 0.01f, 1.0f);
-	ImGui::SetNextItemWidth(200);
-	ImGui::BulletText("Parameter (p)");
-	ImGui::DragFloat("##Parameter (p)", &rho, 0.01f, 10.0f);
-	ImGui::SetNextItemWidth(200);
-	
-	ImGui::Text("Equilibrium solution u_{n} = %.5f ", un);
-	}
-
-	if (ImPlot::BeginPlot("Logistic Difference Equation")) {
-	ImPlot::SetupAxes("n","u_{n}");
-	ImPlot::SetupAxesLimits(0, 10, 0, 1);
-	ImPlot::SetupLegend(ImPlotLocation_East, ImPlotLegendFlags_Outside);
-        
-       	ImPlot::SetNextLineStyle(color1, thickness);
-	ImPlot::PlotLine("u_{n+1} = p u_{n} (1 - u_{n})", xt, yt, 1000);			
-        
-	ImPlot::EndPlot();
-    }
-	if (ImPlot::BeginPlot("Logistic Difference Equation with Two Curves")) {
-	ImPlot::SetupAxes("x","y");
-	ImPlot::SetupAxesLimits(0, 1, 0, 1);
-	ImPlot::SetupLegend(ImPlotLocation_East, ImPlotLegendFlags_Outside);
-        
-       	ImPlot::SetNextLineStyle(color1, thickness);
-	ImPlot::PlotLine("y = p x (1 - x)", xt1, yt1, 1000);			
-        ImPlot::SetNextLineStyle(color2, thickness);
-	ImPlot::PlotLine("y = x", xt2, yt2, 1000);			
-
-	ImPlot::EndPlot();
-    }
-}
-
-//-----------------------------------------------------------------------------
-
-void Demo_LogisticGrowth() {
-	static float xs1[1001], ys1[1001],ys2[1001],ys3[1001],ys4[1001],ys5[1001];
-	static int y01 = 1, y02 = 2, y03 = 3, y04 = 6, y05 = 7;
-	static float r = 0.8;
-	static int K = 5;
-	for (int i = 0; i < 1001; ++i) {
-	xs1[i] = i;
-	ys1[i] = (y01*K) / (y01 + (K - y01)*(exp(-r*i)) ) ;
-	ys2[i] = (y02*K) / (y02 + (K - y02)*(exp(-r*i)) ) ;
-	ys3[i] = (y03*K) / (y03 + (K - y03)*(exp(-r*i)) ) ;
-	ys4[i] = (y04*K) / (y04 + (K - y04)*(exp(-r*i)) ) ;
-	ys5[i] = (y05*K) / (y05 + (K - y05)*(exp(-r*i)) ) ;
-	
-	}
-
-	static bool range = false;
-	ImGui::Checkbox("Change parameters", &range);
-    
-	if (range) {
-	ImGui::SameLine();
-	ImGui::SetNextItemWidth(200);
-	ImGui::BulletText("K");
-	ImGui::SliderInt("##K", &K, 1, 100);
-	ImGui::SetNextItemWidth(200);
-	ImGui::BulletText("Rate");
-	ImGui::DragFloat("##Rate", &r, 0.01f, 0.99f);
-	ImGui::SetNextItemWidth(200);
-	}
-	if (ImPlot::BeginPlot("Logistic Growth")) {
-	ImPlot::SetupAxes("t","y(t)");
-	ImPlot::SetupAxesLimits(0, 10, 0, 10);
-	ImPlot::SetupLegend(ImPlotLocation_East, ImPlotLegendFlags_Outside);
-        
-	ImPlot::PlotLine("y(t) = ( y_{0} * K ) / ( y_{0} + (K - y_{0})exp(-rt) )", xs1, ys1, 1001);
-	ImPlot::PlotLine("y(t) = ( y_{0} * K ) / ( y_{0} + (K - y_{0})exp(-rt) )", xs1, ys2, 1001);
-	ImPlot::PlotLine("y(t) = ( y_{0} * K ) / ( y_{0} + (K - y_{0})exp(-rt) )", xs1, ys3, 1001);
-	ImPlot::PlotLine("y(t) = ( y_{0} * K ) / ( y_{0} + (K - y_{0})exp(-rt) )", xs1, ys4, 1001);
-	ImPlot::PlotLine("y(t) = ( y_{0} * K ) / ( y_{0} + (K - y_{0})exp(-rt) )", xs1, ys5, 1001);
-	ImPlot::EndPlot();
-    }
-}
 //-----------------------------------------------------------------------------
 
 
@@ -1218,7 +892,7 @@ void DemoHeader(const char* label, void(*demo)()) {
     }
 }
 
-void ShowFirstOrderDEWindow(bool* p_open) {
+void ShowSecondOrderDEWindow(bool* p_open) {
     static bool show_implot_metrics      = false;
     static bool show_implot_style_editor = false;
     static bool show_imgui_metrics       = false;
@@ -1247,7 +921,7 @@ void ShowFirstOrderDEWindow(bool* p_open) {
     }
     ImGui::SetNextWindowPos(ImVec2(50, 50), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowSize(ImVec2(600, 750), ImGuiCond_FirstUseEver);
-    ImGui::Begin("First Order Differential Equations", p_open, ImGuiWindowFlags_MenuBar);
+    ImGui::Begin("Second Order Differential Equations", p_open, ImGuiWindowFlags_MenuBar);
     if (ImGui::BeginMenuBar()) {
         if (ImGui::BeginMenu("Tools")) {
             ImGui::MenuItem("Metrics",      nullptr, &show_implot_metrics);
@@ -1274,18 +948,12 @@ void ShowFirstOrderDEWindow(bool* p_open) {
 
     if (ImGui::BeginTabBar("ImPlotDemoTabs")) {
         if (ImGui::BeginTabItem("Plots")) {
-	    DemoHeader("Compound Interest", Demo_CompoundInterest);
-            DemoHeader("Mortgage Loan", Demo_MortgageLoan);
-	    DemoHeader("Radiocarbon Dating", Demo_RadiocarbonDating);	
-            DemoHeader("Newton's Law of Cooling", Demo_NewtonLawofCooling);	
-            DemoHeader("Pollutant in Great Lakes", Demo_PollutantInGreatLakes);	
-            DemoHeader("Sky Diver", Demo_SkyDiver);	
-            DemoHeader("Baseball in Flight", Demo_BaseballinFlight);	
-            DemoHeader("Logistic Growth", Demo_LogisticGrowth);
-            DemoHeader("Nonlinear Difference Equation", Demo_NonlinearDifferenceEquations);
-            DemoHeader("Direction Fields", Demo_DirectionFields);
-            DemoHeader("Direction Fields 2", Demo_DirectionFields2);
-            DemoHeader("Euler's Method", Demo_LinePlots);
+	    DemoHeader("Homogeneous Linear Equation", Demo_HomogeneousLinearEquation);
+            DemoHeader("Sweden Sexy", Demo_MortgageLoan);
+	    DemoHeader("Sine Bam Bam / Biiiiiih", Demo_RadiocarbonDating);	
+            DemoHeader("Walnut", Demo_NewtonLawofCooling);	
+            DemoHeader("Krem", Demo_PollutantInGreatLakes);	
+            DemoHeader("Bludut", Demo_BaseballinFlight);	
             ImGui::EndTabItem();
         }
         if (ImGui::BeginTabItem("Custom")) {
@@ -1489,7 +1157,7 @@ void PlotCandlestick(const char* label_id, const double* xs, const double* opens
 
 #else
 
-void ImPlot::ShowFirstOrderDEWindow(bool* p_open) {}
+void ImPlot::ShowSecondOrderDEWindow(bool* p_open) {}
 
 #endif
 

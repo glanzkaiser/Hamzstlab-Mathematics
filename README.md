@@ -114,5 +114,6 @@ make
 | Pollutant in Great Lakes    | <img src="https://github.com/glanzkaiser/Hamzstlab-Mathematics/blob/main/images/pollutantingreatlakes.gif" width="83%">
 | Sky Diver	    | <img src="https://github.com/glanzkaiser/Hamzstlab-Mathematics/blob/main/images/SkyDiverfinal.gif" width="83%">
 | Nonlinear Difference Equation | <img src="https://github.com/glanzkaiser/Hamzstlab-Mathematics/blob/main/images/NonlinearDifferenceEquations.gif" width="83%">
+| Second Order Homogeneous Linear Equation | <img src="https://github.com/glanzkaiser/Hamzstlab-Mathematics/blob/main/images/SecondOrderHomogeneousEquation.gif" width="83%">
 | Downhill Simplex  | <img src="https://github.com/glanzkaiser/Hamzstlab-Mathematics/blob/main/images/DownhillSimplexfinal.gif" width="83%">
 | Gradient Descent  | <img src="https://github.com/glanzkaiser/Hamzstlab-Mathematics/blob/main/images/GradientDescentfinal.gif" width="83%">
